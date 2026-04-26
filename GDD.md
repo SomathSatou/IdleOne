@@ -159,12 +159,17 @@ Deux créatures parentes → un enfant avec traits hérités + potentiel de muta
 
 **Formule :**
 ```
-floor = min(parentA[stat], parentB[stat]) + breeding_min_bonus (prestige)
-ceil  = max(parentA[stat], parentB[stat]) + breeding_max_bonus (prestige)
+base_min   = min(parentA[stat], parentB[stat])
+base_max   = max(parentA[stat], parentB[stat])
+variance   = (base_max - base_min) * variance_factor   // variance_factor = 0.25 par défaut
+floor      = base_min - variance + breeding_min_bonus (prestige)
+ceil       = base_max + variance + breeding_max_bonus (prestige)
 Stat_enfant = random(floor, ceil) + bonus_generation + mutation_roll
 ```
 
-:P: On devrais pouvoir avoir des enfants moins bon que leur parents
+> **Règle de régression :** Un enfant **peut** avoir des stats inférieures à ses parents. Le `variance_factor` (par défaut 0.25) étend la fourchette sous le minimum parental. Cela signifie qu'un breeding n'est jamais garanti — le joueur doit faire plusieurs tentatives pour optimiser. Le `floor` ne peut jamais descendre en dessous de 1 (plancher absolu).
+
+<!-- Traité par Agent Concepteur : ajout du variance_factor pour permettre la régression des stats en breeding, le floor peut descendre sous le min parental -->
 
 ### 4.3 Héritage des Composants
 
@@ -358,18 +363,24 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 
 ## 9. Stack Technique
 
-**Décision différée** — dépend du format final (web 2D, desktop 3D, mobile, etc.)
+**Décision différée** — dépend du format final (web, desktop, mobile) et du style visuel (2D ou 3D).
 
-| Option | Front | Back | Rendu | Hébergement |
-|---|---|---|---|---|
-| **A — Full Web** | React + TypeScript | Django (Python) | 2D Canvas/SVG | Automia / Vercel |
-| **B — Unity** | Unity UI | C# | 3D | Desktop / Mobile |
-| **C — Hybride** | React + TS | Django | Unity WebGL | Automia |
+| Option | Front | Back | Rendu | Hébergement | Plateformes |
+|---|---|---|---|---|---|
+| **A — Full Web** | React + TypeScript | Django (Python) | 2D Canvas/SVG | Automia / Vercel | Web |
+| **B — Unity 2D** | Unity UI | C# | 2D Sprites/Tilemap | Desktop / Mobile / WebGL | Desktop, Mobile, Web |
+| **C — Unity 3D** | Unity UI | C# | 3D | Desktop / Mobile / WebGL | Desktop, Mobile, Web |
+| **D — Hybride** | React + TS | Django | Unity WebGL | Automia | Web |
 
 ### Critères de choix
-- Si web only → Option A (plus rapide à prototyper)
-- Si 3D important → Option B
-- Si web + 3D → Option C (plus complexe)
+- Si web only, prototypage rapide → Option A
+- Si 2D avec déploiement multi-plateforme (desktop + mobile + web) → Option B
+- Si 3D important → Option C
+- Si web + moteur de jeu intégré → Option D (plus complexe)
+
+> **Note :** Unity supporte nativement le rendu 2D (sprites, tilemaps, animations 2D) avec les mêmes avantages multi-plateforme que le 3D. Pour un jeu idle avec hexagones de stats et grilles d'exploration, l'option Unity 2D (B) offre un bon compromis entre richesse visuelle et portabilité.
+
+<!-- Traité par Agent Concepteur : correction du tableau stack — Unity supporte aussi le 2D, ajout de l'option B Unity 2D et colonne Plateformes -->
 
 ---
 
