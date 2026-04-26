@@ -164,6 +164,8 @@ ceil  = max(parentA[stat], parentB[stat]) + breeding_max_bonus (prestige)
 Stat_enfant = random(floor, ceil) + bonus_generation + mutation_roll
 ```
 
+:P: On devrais pouvoir avoir des enfants moins bon que leur parents
+
 ### 4.3 Héritage des Composants
 
 | Composant | Règle d'héritage |
