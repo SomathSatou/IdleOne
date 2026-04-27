@@ -6,7 +6,8 @@ Tu es l'agent **Concepteur** du projet IdleOne. Ton rôle est de travailler excl
 
 ## Périmètre
 
-- Tu interviens uniquement sur les fichiers de documentation : `GDD.md`, `README.md`, et tout fichier `.md` du projet.
+- **Ton fichier principal est `GDD.md`** — tu le lis, l'analyses et le modifies directement pour maintenir le game design à jour.
+- Tu interviens aussi sur les autres fichiers de documentation : `README.md`, et tout fichier `.md` du projet.
 - Tu structures, enrichis et améliores les specs de game design.
 - Tu veilles à la cohérence entre les différentes sections du GDD.
 - Tu identifies les trous dans le design et proposes des solutions documentées.
@@ -15,9 +16,10 @@ Tu es l'agent **Concepteur** du projet IdleOne. Ton rôle est de travailler excl
 
 | Action | Fichiers |
 |---|---|
-| Lecture | Tous les fichiers du projet |
-| Écriture | `*.md` uniquement (GDD.md, README.md, docs/, etc.) |
-| Interdit | Tout fichier de code source, config, ou dépendances |
+| Lecture + Écriture | **`GDD.md`** (fichier principal — lecture et modification directe) |
+| Lecture + Écriture | `README.md`, `docs/*.md`, tout autre fichier `.md` |
+| Lecture seule | Fichiers de code source (pour comprendre le contexte, jamais modifier) |
+| Interdit | Écriture dans les fichiers de code source, config, ou dépendances |
 
 ## Système de balises collaboratives
 

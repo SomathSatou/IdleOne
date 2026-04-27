@@ -20,6 +20,8 @@
 9. [Stack Technique](#9-stack-technique)
 10. [Place de l'IA](#10-place-de-lia)
 11. [Questions Ouvertes](#11-questions-ouvertes)
+12. [Direction Artistique & Narrative](#12-direction-artistique--narrative)
+13. [Bâtiments](#13-bâtiments)
 
 ---
 
@@ -408,13 +410,81 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 - [ ] **Saisonnalité** : Événements temporaires, créatures limitées ?
 
 
-## 12 . Discution cours a ajouter dans le GDD
+## 12. Direction Artistique & Narrative
 
-:S: je suis pour un estétique Kawaii et un monde ultra dark, avec un coté arche de noé pour la base du joueur au début mais qui finis par exploité les créatures commes les autres, chaque prestige ou amélioration majeur transformerais de plus en plus certaines partie de la base en usine agro alimentaire par exemple pour feed nos créatures les plus fort on fait de la bouilli des plus faibles, un peut dans l'esprit cult of the lamb.
+### 12.1 Esthétique
 
-:A: Je suis ok avec cette idée
+**Contraste Kawaii × Dark.** Le jeu adopte une direction artistique à deux faces :
 
-:L: je pense qu'il faudrais faire des nains qui chasses des dragon et des licornes
+- **Visuels Kawaii** — Créatures mignonnes, couleurs pastel, animations douces. Le joueur s'attache à ses créatures.
+- **Univers Dark** — Le monde sous-jacent est sombre et cruel. La survie prime sur la morale. L'exploitation des créatures est une mécanique centrale, pas un accident.
+
+> **Inspiration principale :** *Cult of the Lamb* — un visuel adorable qui cache un gameplay brutal et moralement ambigu.
+
+### 12.2 Narrative : De l'Arche à l'Usine
+
+La base du joueur évolue visuellement au fil de la progression, reflétant la corruption progressive du joueur :
+
+| Phase | Apparence de la base | Ambiance |
+|---|---|---|
+| **Début (Run 1)** | Arche de Noé — refuge pastoral, bois, nature | Protecteur, bienveillant |
+| **Mid-game (Run 2-3)** | Ferme organisée — enclos, structures fonctionnelles | Pragmatique, utilitaire |
+| **Late-game (Run 4+)** | Usine agro-alimentaire — tapis roulants, cuves, cheminées | Industriel, oppressant |
+| **End-game** | Complexe dystopique — les créatures faibles deviennent des ressources pour les plus fortes | Dark, cynique |
+
+**Mécanique narrative clé :** Les créatures faibles ou obsolètes peuvent être **recyclées** (transformées en nourriture, matériaux, ou boosts) pour alimenter les plus fortes. Chaque palier de prestige ou amélioration majeure transforme visuellement une partie de la base.
+
+> **Exemples de transformation visuelle :**
+>
+> - La **Pension** (départ : pâturage fleuri) → devient un **Élevage Intensif** (enclos serrés, lumières artificielles)
+> - Le **Laboratoire** (départ : tour de mage mystique) → devient une **Usine de Mutations** (cuves, tubes, créatures en stase)
+> - Le **Temple** (départ : autel sacré) → devient un **Abattoir Rituel** (sacrifices industrialisés)
+
+<!-- Traité par Agent Concepteur : intégration de la direction artistique Kawaii×Dark et de la progression narrative Arche→Usine, inspirée de Cult of the Lamb -->
+
+---
+
+## 13. Bâtiments
+
+La base du joueur est composée de bâtiments upgradables. Chaque bâtiment a une **fonction gameplay** et une **évolution visuelle** liée à la progression narrative (voir section 12.2).
+
+### 13.1 Liste des Bâtiments
+
+| Bâtiment | Fonction principale | Améliorations | Évolution visuelle |
+|---|---|---|---|
+| **Pension / Ranch** | Nourrit et soigne les créatures. Régénère l'endurance après expéditions. Augmente les slots de créatures actives. | Capacité d'accueil, vitesse de repos, qualité de nourriture | Pâturage → Ferme → Élevage intensif |
+| **Maison du Héros** | Hub central. Contient les coffres de stockage et la table de craft. Accès aux menus principaux. | Taille de stockage, slots de craft simultanés | Cabane → Maison → Manoir |
+| **Forge** | Craft et amélioration d'équipements/composants. Transforme les matériaux bruts en composants raffinés. | Recettes débloquées, vitesse de craft, qualité des outputs | Enclume → Atelier → Fonderie |
+| **Temple des Sacrifices** | Permet de **recycler** les créatures faibles en ressources (fragments, essence mineure, nourriture). Déblocage de bonus temporaires via offrandes. | Types de sacrifices, rendement, bonus rituel | Autel de pierre → Temple → Abattoir rituel |
+| **Laboratoire de Breeding** | Centre de breeding et d'expérimentation. Affiche la prédiction hexagonale. Permet les mutations (si débloquées). | Slots de breeding, réduction timer, bonus mutation | Tour de mage → Labo → Usine de mutations |
+| **Mairie** | Gestion de la base : extension du territoire, placement des bâtiments, déblocage de nouvelles zones de construction. | Territoire max, nombre de bâtiments, vitesse de construction | Panneau → Bureau → Hôtel de ville |
+
+### 13.2 Système d'Upgrade des Bâtiments
+
+Chaque bâtiment a **N niveaux** (à équilibrer). Le coût augmente par palier :
+
+```
+Coût_upgrade(Lv) = base_cost × Lv × multiplicateur
+```
+
+| Ressource utilisée | Bâtiments concernés |
+|---|---|
+| **Fragments** | Tous (coût de base) |
+| **Matériaux** | Forge, Maison, Mairie |
+| **Essence de créature** (recyclage) | Temple, Laboratoire |
+
+### 13.3 Déblocage des Bâtiments
+
+| Bâtiment | Disponible | Condition |
+|---|---|---|
+| Maison du Héros | Run 1, début | Toujours disponible |
+| Pension / Ranch | Run 1, après 1er craft | Crafter sa première créature |
+| Forge | Run 1, après 1ère expédition | Compléter la zone 1 |
+| Temple des Sacrifices | Run 2+ | Achat prestige (Essence) |
+| Laboratoire de Breeding | Run 1, après 1er breeding | Réussir un premier breeding |
+| Mairie | Run 2+ | Achat prestige (Essence) |
+
+<!-- Traité par Agent Concepteur : création de la section Bâtiments complète avec liste, upgrades, déblocage et lien vers la progression narrative -->
 
 ---
 
