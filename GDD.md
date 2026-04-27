@@ -414,6 +414,8 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 
 :A: Je suis ok avec cette idée
 
+:L: je pense qu'il faudrais faire des nains qui chasses des dragon et des licornes
+
 ---
 
 *Ce document est vivant. Il sera mis à jour au fur et à mesure de la conception.*
