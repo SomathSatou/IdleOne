@@ -77,7 +77,7 @@ Un **jeu idle/incremental de breeding de créatures**, mêlant les mécaniques d
 4. L'expédition rapporte des **rewards** (ressources, déblocages)
 5. Il **améliore** ses bâtiments et ses créatures
 6. Retour en 1 avec plus de puissance
-
+:L: Définit les bâtiments : Quelle utilité pour le joueur ? Quel rôle dans le gameplay ? (ex: couveuse pour que nouvelle créature naisse plus vite ou plus de slots pour en faire couver plus ?)
 ---
 
 ## 3. Système de Créatures
@@ -113,6 +113,7 @@ Chaque créature possède exactement 6 stats, affichées en radar chart hexagona
 | **Forme** | Modifie l'apparence et une stat principale (rond → +CON, triangle → +FOR, etc.) |
 | **Couleur** | Modifie l'affinité élémentaire et une stat secondaire (rouge → Feu/+FOR, bleu → Eau/+INT, etc.) |
 | **Génération** | Gen-0 = crafté, Gen-1+ = issu du breeding. Potentiel augmente avec la génération. |
+:L: limitation du nombre de squelette à 6 pour correspondre aux stats ? ou aucun lien ? Possibilité de traits héirtés négatifs si inbreeding type consanguinité ?
 
 ### 3.3 Affinités Formes → Stats
 
@@ -147,7 +148,7 @@ Chaque créature possède exactement 6 stats, affichées en radar chart hexagona
 ```
 Créature Gen-0 = Squelette + Forme + Couleur
 ```
-
+:L: Comment est définie CG-0 ? Roulette parmis possibilité ou même base pour tous? Choix de squelette/forme + random couleur ? autre?
 **Résultat 100% déterministe.** Le joueur sait exactement ce qu'il obtient.
 
 **Formule :**
@@ -180,6 +181,7 @@ Stat_enfant = random(floor, ceil) + bonus_generation + mutation_roll
 | Squelette | 50/50 d'un parent ou de l'autre |
 | Forme | Dominance : certaines formes sont dominantes sur d'autres |
 | Couleur | Mélange possible (rouge + bleu → violet) ou héritage pur |
+:L: loi de mendel sur les formes ? Tableau ?
 
 ### 4.4 Mutations
 
@@ -239,6 +241,7 @@ Chaque zone est une **grille carrée** avec fog of war.
 4. Une créature avec haute CON peut enchaîner plusieurs cases sans repos
 5. Une créature avec haute VOL continue d'explorer même quand le joueur est offline
 6. Une créature avec haute INT révèle +1 case supplémentaire autour
+:L: possiblité d'avoir multi epxloration si le joueur a plusieurs créatures ?
 
 ### 5.4 Scaling des Zones
 
@@ -256,7 +259,7 @@ Une zone est complétée quand :
 - Toutes les cases sont explorées (si pas de boss)
 
 Compléter une zone débloque la suivante.
-
+:L: Comment est définie l'apparition des boss ?
 ---
 
 ## 6. Rebirth & Prestige
@@ -279,7 +282,7 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 - Toutes les ressources (formes, couleurs, matériaux)
 - Progression des zones (fog of war remis)
 - Niveaux de bâtiments
-
+:L: niveau de bâtiments mais pas quels batiments construit ? j'ai du mal a comprendre le mécanisme autour des batiments
 ### 6.4 Ce qu'on GARDE
 
 - Essence accumulée (cumulatif entre rebirth)
@@ -316,6 +319,7 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 | **Couleurs** (items) | Expéditions, drops | Composant de craft |
 | **Matériaux** | Expéditions, mining | Upgrades de bâtiments |
 | **Essence** ✨ | Rebirth uniquement | Boutique prestige |
+:L: les squelettes ne sont pas des ressources ?
 
 ### 7.2 Coûts (première ébauche — à équilibrer)
 
@@ -360,7 +364,7 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 | Zones | 8 | 12 | 16+ |
 | Slots créatures | 5 | 5 + achats | 5 + achats |
 | Mutations | ❌ Non | ✅ Oui (si acheté) | ✅ Oui |
-
+:L: donc il n'y a que 3 formes ? même chose pour les couleurs ? ou certaines formes et couleurs ne sont dispos que par random breeding?
 ---
 
 ## 9. Stack Technique
@@ -433,6 +437,7 @@ La base du joueur évolue visuellement au fil de la progression, reflétant la c
 | **End-game** | Complexe dystopique — les créatures faibles deviennent des ressources pour les plus fortes | Dark, cynique |
 
 **Mécanique narrative clé :** Les créatures faibles ou obsolètes peuvent être **recyclées** (transformées en nourriture, matériaux, ou boosts) pour alimenter les plus fortes. Chaque palier de prestige ou amélioration majeure transforme visuellement une partie de la base.
+:L: si le joueur refuse de recycler les vieux mais accepte de les laisser vivre un span de vie, est-ce qu'une autre voie est possible en terme d'évol ? mais plus dure d'un pdv gameplay ?
 
 > **Exemples de transformation visuelle :**
 >
@@ -445,7 +450,6 @@ La base du joueur évolue visuellement au fil de la progression, reflétant la c
 ---
 
 ## 13. Bâtiments
-
 La base du joueur est composée de bâtiments upgradables. Chaque bâtiment a une **fonction gameplay** et une **évolution visuelle** liée à la progression narrative (voir section 12.2).
 
 ### 13.1 Liste des Bâtiments
