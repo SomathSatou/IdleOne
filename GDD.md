@@ -399,7 +399,7 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 
 ## 11. Questions Ouvertes
 
-- [ ] **Lore** : Quel est le monde ? Qui sont Akoia et Prozengan dans l'univers ? Y a-t-il une histoire ?
+- [ ] **Lore** : Quel est le monde ? Y a-t-il une histoire ?
 - [ ] **Nom du jeu**
 - [ ] **Multijoueur** : Solo only ou composante sociale (échanges, classements) ?
 - [ ] **Monétisation** : Free-to-play ? Premium ? Cosmétiques ?
