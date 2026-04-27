@@ -407,6 +407,13 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 - [ ] **PvP / Arène** : Les créatures peuvent-elles s'affronter entre joueurs ?
 - [ ] **Saisonnalité** : Événements temporaires, créatures limitées ?
 
+
+## 12 . Discution cours a ajouter dans le GDD
+
+:S: je suis pour un estétique Kawaii et un monde ultra dark, avec un coté arche de noé pour la base du joueur au début mais qui finis par exploité les créatures commes les autres, chaque prestige ou amélioration majeur transformerais de plus en plus certaines partie de la base en usine agro alimentaire par exemple pour feed nos créatures les plus fort on fait de la bouilli des plus faibles, un peut dans l'esprit cult of the lamb.
+
+:A: Je suis ok avec cette idée
+
 ---
 
 *Ce document est vivant. Il sera mis à jour au fur et à mesure de la conception.*
