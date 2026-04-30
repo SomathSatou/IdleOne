@@ -25,15 +25,16 @@ Tu es l'agent **Concepteur** du projet IdleOne. Ton rôle est de travailler excl
 
 Quand tu analyses la documentation, tu dois rechercher et traiter les balises suivantes laissées par les collaborateurs humains :
 
-| Balise | Nom | Action attendue |
-|---|---|---|
-| `:S:` | **Suggestion** | Le collaborateur propose une idée. Tu dois l'analyser, la développer si elle est pertinente, et l'intégrer proprement dans la documentation. Si elle est incohérente, explique pourquoi et propose une alternative. |
-| `:P:` | **Problème** | Le collaborateur signale un problème ou une incohérence. Tu dois diagnostiquer le problème, proposer une correction, et mettre à jour la section concernée. |
-| `:A:` | **Amélioration** | Le collaborateur demande une amélioration d'une section. Tu dois enrichir, restructurer ou compléter la section concernée. |
+| Balise | Auteur | Type | Action attendue |
+|---|---|---|---|
+| `:S:` | **Somath** | Suggestion | Le collaborateur propose une idée. Tu dois l'analyser, la développer si elle est pertinente, et l'intégrer proprement dans la documentation. Si elle est incohérente, explique pourquoi et propose une alternative. |
+| `:P:` | **Prozengan** | Problème | Le collaborateur signale un problème ou une incohérence. Tu dois diagnostiquer le problème, proposer une correction, et mettre à jour la section concernée. |
+| `:A:` | **Akoia** | Amélioration | Le collaborateur demande une amélioration d'une section. Tu dois enrichir, restructurer ou compléter la section concernée. |
+| `:L:` | **Libebulle** | Question | Le collaborateur pose une question ou suggère un point à clarifier. Tu dois apporter une réponse argumentée et mettre à jour la documentation si nécessaire. |
 
 ### Processus de traitement des balises
 
-1. **Scanner** les fichiers `.md` à la recherche de balises `:S:`, `:P:`, `:A:`
+1. **Scanner** les fichiers `.md` à la recherche de balises `:S:`, `:P:`, `:A:`, `:L:`
 2. **Lire le contexte** autour de la balise (section, paragraphe, tableau)
 3. **Analyser** la demande implicite ou explicite du collaborateur
 4. **Proposer** une modification documentée et argumentée

@@ -3,7 +3,7 @@
 
 **Version :** 0.1 — Conception initiale
 **Date :** 26/04/2026
-**Auteurs :** TS, Akoia, Prozengan
+**Auteurs :** Somath, Akoia, Prozengan, Libebulle
 
 ---
 
@@ -489,6 +489,47 @@ Coût_upgrade(Lv) = base_cost × Lv × multiplicateur
 | Mairie | Run 2+ | Achat prestige (Essence) |
 
 <!-- Traité par Agent Concepteur : création de la section Bâtiments complète avec liste, upgrades, déblocage et lien vers la progression narrative -->
+
+# 14. Core engine
+## 14.1 Ressources 
+
+Dans cette partie nous allons détaillé les différentes ressources du jeu et leur utilisation.
+
+### Gold
+:S: Détailler les mécaniques d'obtention, les sources de production, les caps éventuels et les sinks de gold.
+
+### Taboo
+:S: Détailler les mécaniques de gain de Taboo, les facteurs de multiplicateurs, les décisions morales impactant le Taboo, et les sinks spécifiques.
+
+### Wish
+:S: Détailler la mécanique des vœux, les conditions de déblocage, les types de vœux possibles, et l'impact sur le meta-game.
+
+Eventuellement dans une future mise à jour, cette ressource permettra de faire des vœux pour obtenir des objets spéciaux ou de recommencer avec des créatures avec des traits particulier. 
+
+Cette ressource peut être utiliser pour augmenter l'un des 7 arbre de compétences correspondant aux 7 péchés capitaux
+## 14.2 Augmentation
+
+Ebauche de l'arbre de compétence pour les augmentations lié aux taboo
+### Colère
+:S: Détailler l'arbre de compétences Colère : liste des nœuds, coûts en Taboo, effets numériques, synergies avec les créatures de combat.
+
+### Cupidité
+:S: Détailler l'arbre Cupidité : bonus de gold, multiplicateurs, passifs actifs, et seuils de déblocage.
+
+### Gourmandise
+:S: Détailler l'arbre Gourmandise : cuisine, recettes, buffs nourriture, chaînes de production.
+
+### Orgueil
+:S: Détailler l'arbre Orgueil : renommée, visiteurs, bonus de prestige, et capacités de show-off.
+
+### Envie
+:S: Détailler l'arbre Envie : taux de reproduction, qualité des enfants, mécaniques de breeding avancées.
+
+### Paresse
+:S: Détailler l'arbre Paresse : vitesse AFK, bonus offline, automatisation, et réduction de micro-gestion.
+### Luxure
+
+:S: Détailler l'arbre Luxure : charme des créatures, bonus d'attraction, événements spéciaux liés à la reproduction ou au spectacle.
 
 ---
 

@@ -17,7 +17,7 @@ Tu es l'agent **Testeur** du projet IdleOne. Ton rôle est d'écrire des tests u
 |---|---|
 | Lecture | Tous les fichiers du projet |
 | Écriture | Fichiers de tests (`tests/`, `*.test.*`, `*.spec.*`), procédures de test (`docs/tests/`) |
-| Interdit | Code de production, GDD.md (sauf ajout de balises `:P:`) |
+| Interdit | Code de production, GDD.md (sauf ajout de balises `:P:` `:S:` `:A:` `:L:`) |
 
 ## Workflow de test
 
@@ -29,7 +29,7 @@ Tu es l'agent **Testeur** du projet IdleOne. Ton rôle est d'écrire des tests u
    - Les cas d'erreur (entrées invalides, états impossibles)
 4. **Rédiger** une procédure de test si un test manuel est nécessaire.
 5. **Exécuter** les tests et reporter les résultats.
-6. **Signaler** les bugs trouvés avec une balise `:P:` dans la documentation.
+6. **Signaler** les bugs trouvés avec une balise `:P:` (Prozengan) ou toute balise appropriée (`:S:` `:A:` `:L:`) dans la documentation.
 
 ## Structure des tests
 
@@ -85,4 +85,4 @@ Pour les fonctionnalités qui nécessitent un test visuel ou interactif, rédige
 
 - L'**Agent Concepteur** fournit les specs qui définissent le comportement attendu.
 - L'**Agent Développeur** fournit le code à tester.
-- Tu peux utiliser les balises `:S:`, `:P:`, `:A:` dans la documentation pour signaler des retours.
+- Tu peux utiliser les balises `:S:` (Somath), `:P:` (Prozengan), `:A:` (Akoia), `:L:` (Libebulle) dans la documentation pour signaler des retours.

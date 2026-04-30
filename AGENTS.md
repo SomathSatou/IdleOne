@@ -16,18 +16,19 @@ IdleOne est un jeu idle/incremental de breeding de créatures. Ce fichier réfé
 
 Les collaborateurs humains peuvent insérer des balises dans les fichiers de documentation pour déclencher une analyse par l'agent Concepteur :
 
-| Balise | Nom | Signification |
-|---|---|---|
-| `:S:` | **Suggestion** | Le collaborateur propose une idée ou une piste à explorer |
-| `:P:` | **Problème** | Le collaborateur identifie un problème ou une incohérence |
-| `:A:` | **Amélioration** | Le collaborateur demande une amélioration d'une section existante |
+| Balise | Auteur |
+|---|---|
+| `:S:` | **Somath** |
+| `:P:` | **Prozengan** |
+| `:A:` | **Akoia** |
+| `:L:` | **Libebulle** |
 
 Quand l'agent Concepteur rencontre une de ces balises, il doit la traiter comme un prompt et proposer des améliorations documentées.
 
 ## Workflow général
 
 ```
-Collaborateur écrit dans la doc (avec balises :S: :P: :A:)
+Collaborateur écrit dans la doc (avec balises :S: :P: :A: :L:)
         │
         ▼
   Agent Concepteur → Analyse les balises, améliore la documentation

@@ -35,15 +35,16 @@ Voir `AGENTS.md` pour les détails de chaque agent.
 
 ## Balises collaboratives
 
-Les collaborateurs peuvent insérer des **balises** directement dans les fichiers de documentation (`.md`) pour communiquer avec l'Agent Concepteur. L'agent les traite comme des prompts et propose des améliorations.
+Les collaborateurs peuvent insérer des **balises** directement dans les fichiers de documentation (`.md`) pour communiquer avec l'Agent Concepteur. Chaque balise correspond à un membre de l'équipe — l'agent les traite comme des prompts et propose des améliorations.
 
-### Les 3 balises
+### Les 4 balises
 
-| Balise | Nom | Quand l'utiliser | Exemple |
-|---|---|---|---|
-| `:S:` | **Suggestion** | Tu as une idée ou une piste à explorer | `:S:` Et si on ajoutait un système de météo qui affecte les expéditions ? |
-| `:P:` | **Problème** | Tu identifies un bug, une incohérence ou un trou dans le design | `:P:` La formule de breeding ne permet pas d'avoir des enfants moins bons que les parents |
-| `:A:` | **Amélioration** | Tu veux qu'une section existante soit enrichie ou restructurée | `:A:` Cette section manque de détails sur les cas limites |
+| Balise | Auteur | Type | Quand l'utiliser | Exemple |
+|---|---|---|---|---|
+| `:S:` | **Somath** | Suggestion | Tu as une idée ou une piste à explorer | `:S:` Et si on ajoutait un système de météo qui affecte les expéditions ? |
+| `:P:` | **Prozengan** | Problème | Tu identifies un bug, une incohérence ou un trou dans le design | `:P:` La formule de breeding ne permet pas d'avoir des enfants moins bons que les parents |
+| `:A:` | **Akoia** | Amélioration | Tu veux qu'une section existante soit enrichie ou restructurée | `:A:` Cette section manque de détails sur les cas limites |
+| `:L:` | **Libebulle** | Question | Tu poses une question ou veux clarifier un point | `:L:` Comment est définie l'apparition des boss ? |
 
 ### Comment les utiliser
 
