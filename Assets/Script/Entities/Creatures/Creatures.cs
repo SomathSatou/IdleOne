@@ -19,14 +19,17 @@ namespace Assets.Script.Creatures
         public string Name;
 
         /// <summary>Type de base (bipède, quadrupède, volant, serpentin…).</summary>
+        // :S: TODO string to class 
         public string Skeleton;
 
         /// <summary>Forme influençant l'apparence et une stat principale.
         /// Valeurs possibles : Rond, Triangle, Carré, Ovale, Losange, Étoile.</summary>
+        // :S: TODO string to class 
         public string Shape;
 
         /// <summary>Couleur influençant l'affinité élémentaire et une stat secondaire.
         /// Valeurs possibles : Rouge, Bleu, Vert, Jaune, Violet, Orange, Doré, Arc-en-ciel.</summary>
+        // :S: TODO string to class 
         public string Color;
 
         /// <summary>Gen-0 = craftée, Gen-1+ = issue du breeding.
@@ -38,60 +41,60 @@ namespace Assets.Script.Creatures
         // ==========================
 
         /// <summary>Force (FOR / STR) — Dégâts physiques, capacité de charge.</summary>
-        public int Strength;
+        public float Strength;
 
         /// <summary>Agilité (AGI) — Vitesse, esquive.</summary>
-        public int Agility;
+        public float Agility;
 
         /// <summary>Intelligence (INT) — Dégâts magiques, efficacité spécialisée.</summary>
-        public int Intelligence;
+        public float Intelligence;
 
         /// <summary>Chance (CHA / LCK) — Drops rares, crits, mutations.</summary>
-        public int Luck;
+        public float Luck;
 
         /// <summary>Constitution (CON) — PV, endurance.</summary>
-        public int Constitution;
+        public float Constitution;
 
         /// <summary>Volonté (VOL / WIL) — Résistance, bonus idle.</summary>
-        public int Willpower;
+        public float Willpower;
 
         // ==========================
         //  Stats de base (pour calcul)
         // ==========================
 
-        [HideInInspector] public int BaseStrength;
-        [HideInInspector] public int BaseAgility;
-        [HideInInspector] public int BaseIntelligence;
-        [HideInInspector] public int BaseLuck;
-        [HideInInspector] public int BaseConstitution;
-        [HideInInspector] public int BaseWillpower;
+        [HideInInspector] public float BaseStrength;
+        [HideInInspector] public float BaseAgility;
+        [HideInInspector] public float BaseIntelligence;
+        [HideInInspector] public float BaseLuck;
+        [HideInInspector] public float BaseConstitution;
+        [HideInInspector] public float BaseWillpower;
 
-        [HideInInspector] public int ShapeBonusStrength;
-        [HideInInspector] public int ShapeBonusAgility;
-        [HideInInspector] public int ShapeBonusIntelligence;
-        [HideInInspector] public int ShapeBonusLuck;
-        [HideInInspector] public int ShapeBonusConstitution;
-        [HideInInspector] public int ShapeBonusWillpower;
+        [HideInInspector] public float ShapeBonusStrength;
+        [HideInInspector] public float ShapeBonusAgility;
+        [HideInInspector] public float ShapeBonusIntelligence;
+        [HideInInspector] public float ShapeBonusLuck;
+        [HideInInspector] public float ShapeBonusConstitution;
+        [HideInInspector] public float ShapeBonusWillpower;
 
-        [HideInInspector] public int ColorBonusStrength;
-        [HideInInspector] public int ColorBonusAgility;
-        [HideInInspector] public int ColorBonusIntelligence;
-        [HideInInspector] public int ColorBonusLuck;
-        [HideInInspector] public int ColorBonusConstitution;
-        [HideInInspector] public int ColorBonusWillpower;
+        [HideInInspector] public float ColorBonusStrength;
+        [HideInInspector] public float ColorBonusAgility;
+        [HideInInspector] public float ColorBonusIntelligence;
+        [HideInInspector] public float ColorBonusLuck;
+        [HideInInspector] public float ColorBonusConstitution;
+        [HideInInspector] public float ColorBonusWillpower;
 
         // ==========================
         //  Stats dérivées
         // ==========================
 
         /// <summary>PV max = Constitution × 10 (équilibrage à ajuster).</summary>
-        public int MaxHealth => Constitution * 10;
+        public float MaxHealth => Constitution * 10;
 
         /// <summary>PV actuels.</summary>
-        public int CurrentHealth;
+        public float CurrentHealth;
 
         /// <summary>Somme totale des 6 stats (pour comparaison rapide).</summary>
-        public int TotalStats => Strength + Agility + Intelligence + Luck + Constitution + Willpower;
+        public float TotalStats => Strength + Agility + Intelligence + Luck + Constitution + Willpower;
 
         // ==========================
         //  Rôles en expédition (GDD §3.1)
@@ -105,13 +108,14 @@ namespace Assets.Script.Creatures
         public float ExplorationSpeedMultiplier => Mathf.Max(0.1f, 1f - (Agility * 0.01f));
 
         /// <summary>Révèle cases adjacentes (+vision).</summary>
-        public int VisionRadius => 1 + (Intelligence / 10);
+        public float VisionRadius => 1 + (Intelligence / 10);
 
         /// <summary>Meilleurs drops, cases cachées bonus.</summary>
         public float DropQualityMultiplier => 1f + (Luck * 0.02f);
 
         /// <summary>Explore plusieurs cases d'affilée.</summary>
-        public int MaxConsecutiveExplorations => 1 + (Constitution / 5);
+        // TODO check a better way than casting to int
+        public int MaxConsecutiveExplorations => 1 + ((int)Constitution / 5);
 
         /// <summary>Continue d'explorer offline.</summary>
         public bool CanExploreOffline => Willpower >= 5;
@@ -145,15 +149,15 @@ namespace Assets.Script.Creatures
         /// Retourne les 6 stats dans l'ordre de l'hexagone radar chart :
         /// Force, Agilité, Intelligence, Chance, Constitution, Volonté.
         /// </summary>
-        public int[] GetStatsArray()
+        public float[] GetStatsArray()
         {
-            return new int[] { Strength, Agility, Intelligence, Luck, Constitution, Willpower };
+            return new float[] { Strength, Agility, Intelligence, Luck, Constitution, Willpower };
         }
 
         /// <summary>
         /// Applique des dégâts à la créature.
         /// </summary>
-        public void TakeDamage(int damage)
+        public void TakeDamage(float damage)
         {
             CurrentHealth = Mathf.Max(0, CurrentHealth - damage);
         }
@@ -161,7 +165,7 @@ namespace Assets.Script.Creatures
         /// <summary>
         /// Soigne la créature jusqu'à son max.
         /// </summary>
-        public void Heal(int amount)
+        public void Heal(float amount)
         {
             CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
         }
