@@ -117,3 +117,5 @@ desktop.ini
  
 # Node (si tu as des outils web)
 node_modules/
+*.meta
+.vsconfig

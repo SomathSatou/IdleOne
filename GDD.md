@@ -548,6 +548,8 @@ Le Taboo est la ressource "morale" du jeu, matérialisant la corruption progress
 | **Ratio morts/créés** | Nombre total de créatures sacrifiées / nombre total créées (across all runs). Influence un multiplicateur global permanent. |
 | **Affinité Élément Ombre** | Les créatures de couleur Violet (Ombre) génèrent [+20%] de Taboo lors de leurs sacrifices. |
 
+:S: liberté de l'agent mais ça peut faire office de shiny
+
 #### Sinks de Taboo
 
 | Sink | Description |
@@ -735,6 +737,8 @@ Les arbres de compétences sont alimentés par la ressource **Taboo**. Chaque ar
 
 ### Envie (Envy)
 
+:S: rework sur des bonus de découverte ou de chance d'obtenir des meilleurs butin 
+
 **Philosophie** : La reproduction obsessionnelle et l'amélioration génétique. L'arbre Envie optimise le breeding : taux, qualité des enfants, mutations, et héritage avancé.
 
 | Nœud | Tier | Nom | Coût (Taboo) | Effet |
@@ -776,7 +780,10 @@ Les arbres de compétences sont alimentés par la ressource **Taboo**. Chaque ar
 <!-- Traité par Agent Concepteur : 10 nœuds, optimisation AFK/offline/automatisation, branche Dormeur/Planificateur mutuellement exclusive, auto-craft/auto-breeding, Gestionnaire, capacité ultime Éternité, synergies Gourmandise/Orgueil/Envie -->
 ### Luxure (Lust)
 
-**Philosophie** : L'attraction charnelle et les plaisirs de la chair. L'arbre Luxure améliore le charme des créatures, débloque des événements spéciaux liés à la reproduction et au spectacle, et optimise les interactions sociales entre créatures.
+**Philosophie** : L'attraction charnelle et les plaisirs de la chair. L'arbre Luxure améliore le charme des créatures, débloque des événements spéciaux liés à la reproduction et au spectacle, et optimise les interactions sociales entre créatures. 
+
+:S: optimise le breeding : taux, qualité des enfants, mutations, et héritage avancé.
+
 
 | Nœud | Tier | Nom | Coût (Taboo) | Effet |
 |---|---|---|---|---|
