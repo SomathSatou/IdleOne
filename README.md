@@ -88,3 +88,18 @@ Cette balise dans la section Breeding signale que la formule actuelle (`floor = 
 - **`GDD.md`** — Game Design Document complet (créatures, craft, breeding, expéditions, prestige, économie)
 - **`AGENTS.md`** — Configuration et workflow des agents IA
 - **`agents/`** — Définitions détaillées de chaque agent
+
+---
+
+## Prototype UI
+
+Un prototype d'interface créature est en cours de développement dans `Assets/Script/UI/` :
+
+- **`CreatureUI.cs`** — Panneau affichant nom, barre de PV et statut de la créature.
+- **`CreatureHealthTicker.cs`** — Coroutine infligeant `1 PV/s` pour simuler la dégradation de santé.
+- **`DemoCreatureSpawner.cs`** — Spawner de test créant une créature mockée et la bindant à l'UI.
+- **Bouton "Nourrir"** — Soigne `+10 PV` par clic. Le statut passe à **"Incapacite"** (rouge) quand les PV atteignent 0, et revient à **"Actif"** (vert) après soin.
+
+Ce prototype valide le système de santé et l'état Incapacité avant intégration aux mécaniques d'expédition et de breeding.
+
+> **Note technique :** Le projet utilise le **Built-in Render Pipeline** (pas URP). URP 17.4.0 provoque une erreur de compilation interne (CS8347 dans `com.unity.render-pipelines.core`). Cette décision est temporaire jusqu'à ce qu'un patch Unity corrige le bug.

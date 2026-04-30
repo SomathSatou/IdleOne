@@ -106,6 +106,8 @@ Chaque créature possède exactement 6 stats, affichées en radar chart hexagona
 | **Constitution (CON)** | CON | PV, endurance | Explore plusieurs cases d'affilée |
 | **Volonté (VOL)** | WIL | Résistance, bonus idle | Continue d'explorer offline |
 
+> **État Incapacité** : Une créature dont les PV atteignent 0 devient **Incapacitée** — elle ne peut plus explorer ni breeder jusqu'à être soignée (nourrie).
+
 ### 3.2 Composants d'une Créature
 
 | Composant | Rôle |
@@ -386,6 +388,8 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 - Si web + moteur de jeu intégré → Option D (plus complexe)
 
 > **Note :** Unity supporte nativement le rendu 2D (sprites, tilemaps, animations 2D) avec les mêmes avantages multi-plateforme que le 3D. Pour un jeu idle avec hexagones de stats et grilles d'exploration, l'option Unity 2D (B) offre un bon compromis entre richesse visuelle et portabilité.
+>
+> **⚠️ État actuel du prototype :** Le projet utilise temporairement le **Built-in Render Pipeline** (pas URP). URP 17.4.0 provoque une erreur de compilation interne (CS8347 dans `com.unity.render-pipelines.core`). Ce choix est conservé jusqu'à ce qu'un patch Unity corrige le bug.
 
 <!-- Traité par Agent Concepteur : correction du tableau stack — Unity supporte aussi le 2D, ajout de l'option B Unity 2D et colonne Plateformes -->
 
