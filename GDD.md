@@ -34,7 +34,8 @@ Un **jeu idle/incremental de breeding de créatures**, mêlant les mécaniques d
 - **Pokémon** — breeding, collection, types
 - **Shapez** — formes/couleurs comme blocs de construction visuelle
 - **Cookie Clicker / PokéClicker** — idle/click mécanique
-- **Koletera II / Trimm** — systèmes propres au groupe
+- **Koletera II / Trimps** — systèmes propres au groupe
+- **Graveyard Keeper / Stardew Valley** - univers et DA
 
 ### Pilliers de Design
 1. **Craft déterministe** pour apprendre, **breed aléatoire** pour optimiser
@@ -77,7 +78,9 @@ Un **jeu idle/incremental de breeding de créatures**, mêlant les mécaniques d
 4. L'expédition rapporte des **rewards** (ressources, déblocages)
 5. Il **améliore** ses bâtiments et ses créatures
 6. Retour en 1 avec plus de puissance
+
 <!-- Traité par Agent Concepteur : Les bâtiments sont définis dans la section 7.5.1 avec leur fonction gameplay, améliorations et évolution visuelle. Voir §7.5 pour le détail complet. -->
+
 ---
 
 ## 3. Système de Créatures
@@ -134,12 +137,29 @@ Chaque créature possède exactement 6 stats, affichées en radar chart hexagona
 |---|---|---|
 | Rouge | Feu | +FOR |
 | Bleu | Eau | +INT |
-| Vert | Nature | +CON |
+| Vert | Nature | +VOL |
 | Jaune | Foudre | +AGI |
 | Violet | Ombre | +CHA |
-| Orange | Terre | +VOL |
+| Orange | Terre | +CON |
 | Doré | Lumière | +CHA (mutation) |
 | Arc-en-ciel | Chaos | +ALL (mutation rare) |
+
+:Z: réfléchis au limites , combien de types de formes ect pour cadrer l'espace des créatures posibles
+
+:Z: Couleurs -> essence élémentaire
+
+### 3.5 Bestiaires
+
+Abraham va participer a la partie création du bestiaires
+
+L'idée est qu'il nous propose une premières ébauches des 24 créatures de génération 1, sachant que pour l'instant on partirais sur 5 slimes de couleurs différentes en générations 0. 
+
+en résumé ça donne :
+
+- Gen 0 : 5 slimes
+- Gen 1 : 24 créatures qui commence a ressembler a des formes
+- Gen 2 : 48 limité les créatures par un ensemble de recettes specifique
+- Gen 3 : 96 même principe et éventuellement plus recettes pour des légendaire ou spécifique a des péchés capitaux
 
 ---
 
@@ -183,6 +203,7 @@ Stat_enfant = random(floor, ceil) + bonus_generation + mutation_roll
 | Squelette | 50/50 d'un parent ou de l'autre |
 | Forme | Dominance : certaines formes sont dominantes sur d'autres |
 | Couleur | Mélange possible (rouge + bleu → violet) ou héritage pur |
+
 :L: loi de mendel sur les formes ? Tableau ?
 
 ### 4.4 Mutations
@@ -620,26 +641,11 @@ Coût_upgrade(Lv) = base_cost × Lv × multiplicateur
 
 ## 9. Stack Technique
 
-**Décision différée** — dépend du format final (web, desktop, mobile) et du style visuel (2D ou 3D).
-
 | Option | Front | Back | Rendu | Hébergement | Plateformes |
 |---|---|---|---|---|---|
-| **A — Full Web** | React + TypeScript | Django (Python) | 2D Canvas/SVG | Automia / Vercel | Web |
-| **B — Unity 2D** | Unity UI | C# | 2D Sprites/Tilemap | Desktop / Mobile / WebGL | Desktop, Mobile, Web |
-| **C — Unity 3D** | Unity UI | C# | 3D | Desktop / Mobile / WebGL | Desktop, Mobile, Web |
-| **D — Hybride** | React + TS | Django | Unity WebGL | Automia | Web |
+| **Unity 3D** | Unity UI | C# | 3D | Desktop / Mobile / WebGL | Desktop, Mobile, Web |
 
-### Critères de choix
-- Si web only, prototypage rapide → Option A
-- Si 2D avec déploiement multi-plateforme (desktop + mobile + web) → Option B
-- Si 3D important → Option C
-- Si web + moteur de jeu intégré → Option D (plus complexe)
-
-> **Note :** Unity supporte nativement le rendu 2D (sprites, tilemaps, animations 2D) avec les mêmes avantages multi-plateforme que le 3D. Pour un jeu idle avec hexagones de stats et grilles d'exploration, l'option Unity 2D (B) offre un bon compromis entre richesse visuelle et portabilité.
->
-> **⚠️ État actuel du prototype :** Le projet utilise temporairement le **Built-in Render Pipeline** (pas URP). URP 17.4.0 provoque une erreur de compilation interne (CS8347 dans `com.unity.render-pipelines.core`). Ce choix est conservé jusqu'à ce qu'un patch Unity corrige le bug.
-
-<!-- Traité par Agent Concepteur : correction du tableau stack — Unity supporte aussi le 2D, ajout de l'option B Unity 2D et colonne Plateformes -->
+On choisit Unity 3D car si on commence en 2D pur pas moyen d'ajouter l'isométrie pour faire un effet 2.5D.
 
 ---
 
@@ -665,7 +671,6 @@ Coût_upgrade(Lv) = base_cost × Lv × multiplicateur
 - [ ] **Système d'évolution** : Les créatures peuvent-elles évoluer (en plus du breeding) ?
 - [ ] **PvP / Arène** : Les créatures peuvent-elles s'affronter entre joueurs ?
 - [ ] **Saisonnalité** : Événements temporaires, créatures limitées ?
-
 
 ## 12. Direction Artistique & Narrative
 

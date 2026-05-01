@@ -120,3 +120,4 @@ node_modules/
 *.meta
 .vsconfig
 Assets/TextMesh Pro/*
+.obsidian
