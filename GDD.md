@@ -13,16 +13,15 @@
 2. [Core Loop](#2-core-loop)
 3. [Système de Créatures](#3-système-de-créatures)
 4. [Craft & Breeding](#4-craft--breeding)
-5. [Expéditions & Zones](#5-expéditions--zones)
+5. [Expéditions, Zones & Monde Top-Down](#5-expéditions-zones--monde-top-down)
 6. [Rebirth & Prestige](#6-rebirth--prestige)
-7. [Économie & Ressources](#7-économie--ressources)
+7. [Économie, Ressources & Bâtiments](#7-économie-ressources--bâtiments)
 8. [Progression par Run](#8-progression-par-run)
 9. [Stack Technique](#9-stack-technique)
 10. [Place de l'IA](#10-place-de-lia)
 11. [Questions Ouvertes](#11-questions-ouvertes)
 12. [Direction Artistique & Narrative](#12-direction-artistique--narrative)
-13. [Bâtiments](#13-bâtiments)
-14. [Core Engine](#14-core-engine)
+13. [Les 7 Arbres de Péchés](#13-les-7-arbres-de-péchés)
 
 ---
 
@@ -78,7 +77,7 @@ Un **jeu idle/incremental de breeding de créatures**, mêlant les mécaniques d
 4. L'expédition rapporte des **rewards** (ressources, déblocages)
 5. Il **améliore** ses bâtiments et ses créatures
 6. Retour en 1 avec plus de puissance
-:L: Définit les bâtiments : Quelle utilité pour le joueur ? Quel rôle dans le gameplay ? (ex: couveuse pour que nouvelle créature naisse plus vite ou plus de slots pour en faire couver plus ?)
+<!-- Traité par Agent Concepteur : Les bâtiments sont définis dans la section 7.5.1 avec leur fonction gameplay, améliorations et évolution visuelle. Voir §7.5 pour le détail complet. -->
 ---
 
 ## 3. Système de Créatures
@@ -116,7 +115,7 @@ Chaque créature possède exactement 6 stats, affichées en radar chart hexagona
 | **Forme** | Modifie l'apparence et une stat principale (rond → +CON, triangle → +FOR, etc.) |
 | **Couleur** | Modifie l'affinité élémentaire et une stat secondaire (rouge → Feu/+FOR, bleu → Eau/+INT, etc.) |
 | **Génération** | Gen-0 = crafté, Gen-1+ = issu du breeding. Potentiel augmente avec la génération. |
-:L: limitation du nombre de squelette à 6 pour correspondre aux stats ? ou aucun lien ? Possibilité de traits héirtés négatifs si inbreeding type consanguinité ?
+<!-- Traité par Agent Concepteur : Aucun lien direct entre le nombre de squelettes et les 6 stats. Les squelettes déterminent les stats de base mais il peut y en avoir plus de 6 types (débloqués via prestige). L'inbreeding est traité dans l'arbre Envie (E-7 Lignée Maudite) qui réduit le malus de consanguinité. -->
 
 ### 3.3 Affinités Formes → Stats
 
@@ -151,7 +150,7 @@ Chaque créature possède exactement 6 stats, affichées en radar chart hexagona
 ```
 Créature Gen-0 = Squelette + Forme + Couleur
 ```
-:L: Comment est définie CG-0 ? Roulette parmis possibilité ou même base pour tous? Choix de squelette/forme + random couleur ? autre?
+<!-- Traité par Agent Concepteur : Le craft Gen-0 est 100% déterministe. Le joueur choisit librement le Squelette (type de base débloqué), la Forme (parmi celles possédées) et la Couleur (parmi celles possédées). Aucun élément aléatoire. Seules les Formes et Couleurs sont des ressources consommables. -->
 **Résultat 100% déterministe.** Le joueur sait exactement ce qu'il obtient.
 
 **Formule :**
@@ -203,7 +202,7 @@ Le joueur voit la **zone probable** et fait un choix éclairé.
 
 ---
 
-## 5. Expéditions & Zones
+## 5. Expéditions, Zones & Monde Top-Down
 
 ### 5.1 Structure d'une Zone
 
@@ -258,11 +257,101 @@ Chaque zone est une **grille carrée** avec fog of war.
 ### 5.5 Fin de Zone
 
 Une zone est complétée quand :
+
 - Le boss est vaincu, OU
 - Toutes les cases sont explorées (si pas de boss)
 
 Compléter une zone débloque la suivante.
 :L: Comment est définie l'apparition des boss ?
+:S: L'apparition du boss est aléatoire — il occupe une case masqué aléatoirement dans la zone.
+
+### 5.6 Monde Top-Down & Exploration
+
+#### 5.6.1 Principe Général
+
+IdleOne ajoute une couche d'exploration **top-down** au-dessus des écrans de gestion. Le joueur incarne un personnage qui se déplace physiquement dans le hub : un village entourant sa ferme de créatures.
+
+- **Perspective** : vue top-down orthographique ou légèrement isométrique.
+- **Échelle** : le joueur est un sprite/avatar simple. Les créatures actives apparaissent dans leurs enclos.
+- **Rôle** : les écrans de craft, breeding et expédition sont accessibles en s'approchant des bâtiments et en interagissant.
+
+> **DA** : rendu top-down conservant le contraste Kawaii × Dark (§12.2).
+
+#### 5.6.2 Caméra & Contrôles
+
+| Élément | Détail |
+|---|---|
+| **Déplacement** | Clavier (ZQSD / WASD / flèches) ou click-to-move. |
+| **Sprint** | Touche Shift (cosmétique, sans impact mécanique). |
+| **Caméra** | Orthographique top-down, défilement auto aux bords. Zoom molette (limité). |
+| **Interaction** | Touche E / Espace quand une bulle d'action apparaît au-dessus d'une entité à portée (1.5 tiles). |
+
+#### 5.6.3 Architecture des Maps & Changement de Map
+
+Le hub est découpé en maps connectées par des zones de transition.
+
+| Map | Description | Contenu |
+|---|---|---|
+| **Village** | Place centrale, maisons PNJ, marché. | Entrée expéditions, quêteurs. |
+| **Ferme Extérieure** | Pâturages, enclos, jardins. | Pension extérieure, créatures actives. |
+| **Maison du Héros** | Intérieur du hub central. | Coffres, table de craft. |
+| **Forge** | Intérieur atelier. | Enclume, établi de composants. |
+| **Laboratoire** | Intérieur labo. | Cuves breeding, prédiction hexagonale. |
+| **Temple** | Intérieur temple (Run 2+). | Autel de recyclage, offrandes. |
+
+**Transitions** : portes avec fondu noir. Si possible, même grande map avec zones délimitées.
+
+#### 5.6.4 PNJ & Routines de Déplacement
+
+Les PNJ animent le village et la ferme avec des comportements programmés.
+
+| Type | Rôle | Localisation |
+|---|---|---|
+| **Villageois** | Lore, rumeurs. | Village, maisons. |
+| **Marchand** | Objets cosmétiques, matériaux. | Place centrale (jour). |
+| **Quêteur** | Quêtes secondaires. | Change selon la quête. |
+| **Visiteur Prestigieux** | Rewards spéciaux (Orgueil O-2). | Mairie, aléatoire. |
+| **Soigneur** | Soigne créatures contre Fragments. | Pension. |
+
+**Routines** :
+- **Patrouille** : waypoints avec pauses aléatoires (5-15s).
+- **Horaires** : jour (06-20h) actifs dans le village ; nuit retour chez eux. PNJ spéciaux (marchand noir) apparaissent la nuit.
+- **Contextuels** : panique si créature échappée ; intérêt si créature rare à proximité ; nervosité si haut Taboo.
+
+<!-- Traité par Agent Concepteur : Ajout des routines météo et événements ponctuels. Pluie → PNJ se réfugient dans les bâtiments, créatures errantes moins actives. Festival saisonnier → PNJ spéciaux offrent quêtes limitées et rewards bonus (Formes/Couleurs rares). -->
+
+#### 5.6.5 Système d'Interactions
+
+Touche d'action (E / Espace) quand une bulle (!/...) apparaît au-dessus d'une entité à portée (1.5 tiles).
+
+| Cible | Résultat |
+|---|---|
+| **Bâtiment** | Entrer / ouvrir UI de gestion. |
+| **Machine / Établi** | UI de craft, breeding, etc. |
+| **Créature (enclos)** | Inspection rapide (bulle nom/PV/statut). Option Nourrir. |
+| **PNJ** | Dialogue texte, déclenche quête. |
+| **Objet décor** | Inspection lore ou récupération Fragments. |
+
+#### 5.6.6 Ferme de Créatures & Enclos
+
+La ferme est le cœur spatial. Les créatures actives résident dans des enclos visibles délimités par des clôtures.
+
+- **Capacité** : chaque enclo accueille [N] créatures selon le niveau de la Pension (§7.5.1).
+- **Comportements** :
+  - **Errance** : random walk dans l'enclos avec rebond sur les bords.
+  - **Faim** : immobilisation + bulle "faim" si PV bas.
+  - **Sommeil** : allongement périodique.
+  - **Panique** : fuite opposée si enclos endommagé.
+- **Interaction** : le joueur peut nourrir (+PV) ou caresser (cosmétique, cœurs visuels).
+- **Progression visuelle** : clôtures bois → métal → cages industrielles avec l'accumulation de Taboo.
+
+#### 5.6.7 Liens avec les Autres Systèmes
+
+- **Expéditions** : portail dans le village pour accéder à l'interface des expéditions (§5.1).
+- **Bâtiments** : chaque bâtiment du §7.5 possède une représentation 2D/3D. Les upgrades modifient visuellement l'apparence.
+- **Économie** : marchand du village accepte Fragments et Gold (Run 2+). Ventes de créatures via stand de marché débloqué avec la Mairie.
+- **Prestige** : au Rebirth, la map est réinitialisée (bâtiments niveau 1, enclos vides), mais Essence et upgrades permanents persistent.
+
 ---
 
 ## 6. Rebirth & Prestige
@@ -311,9 +400,9 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 
 ---
 
-## 7. Économie & Ressources
+## 7. Économie, Ressources & Bâtiments
 
-### 7.1 Ressources de Base
+### 7.1 Ressources de craft créatures
 
 | Ressource | Source | Utilisation |
 |---|---|---|
@@ -322,9 +411,128 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 | **Couleurs** (items) | Expéditions, drops | Composant de craft |
 | **Matériaux** | Expéditions, mining | Upgrades de bâtiments |
 | **Essence** ✨ | Rebirth uniquement | Boutique prestige |
-:L: les squelettes ne sont pas des ressources ?
+<!-- Traité par Agent Concepteur : Les squelettes ne sont pas des ressources consommables mais des **types de base** choisis au moment du craft Gen-0. Seules les Formes et Couleurs sont des items/ressources consommables. Les Squelettes sont débloqués via la Boutique de Prestige (Essence). -->
 
 ### 7.2 Coûts (première ébauche — à équilibrer)
+
+#### 7.2.1 Gold
+
+Le Gold est la monnaie de commerce et de luxe du late-game, distincte des Fragments (monnaie de base d'un run).
+
+**Sources de production**
+
+| Source | Description | Disponibilité |
+|---|---|---|
+| **Vente de créatures** | Les créatures Gen-2+ peuvent être vendues sur le marché. Le prix dépend de la génération, des stats et des traits rares. | Run 2+ (débloqué via Mairie) |
+| **Expéditions — Cases Trésor** | Certaines cases spéciales (rares) rapportent du Gold directement. | Run 2+, haute CHA augmente la fréquence |
+| **Bâtiment : Bourse** | Débloqué Run 3+ via prestige. Génère passivement des intérêts sur le Gold stocké. | Run 3+ |
+| **Réalisations (Achievements)** | Milestones globaux (créatures créées, runs complétés, etc.) donnent des bonus de Gold. | Permanent |
+
+**Sinks de Gold**
+
+| Sink | Description | Impact |
+|---|---|---|
+| **Accélérations** | Payer du Gold pour instantanément terminer un timer (craft, breeding, exploration). | Qualité de vie |
+| **Upgrades de bâtiments avancés** | Certains niveaux ultimes de bâtiments (niveaux 10+) nécessitent du Gold. | Puissance |
+| **Décorations & Skins** | Achat cosmétique pour la base et les créatures. | Personnalisation |
+| **Donations à l'Orgueil** | Offrir du Gold dans l'arbre Orgueil pour débloquer des visiteurs prestigieux. | Progression |
+
+**Caps et équilibrage**
+
+- **Soft cap par run** : Les ventes de créatures de même génération subissent des rendements décroissants (diminishing returns). Vendre 10 créatures Gen-5 rapporte moins que vendre 10 créatures de générations variées.
+- **Hard cap temporaire** : Le Gold se reset au Rebirth, sauf les upgrades permanents achetés avec Gold et les décorations.
+- **Intérêts de la Bourse** : Plafonnés à [X]% du total de Fragments convertis ce run.
+
+#### 7.2.2 Taboo
+
+Le Taboo est la ressource "morale" du jeu, matérialisant la corruption progressive du joueur. Plus le joueur adopte des comportements sombres (sacrifices, exploitation), plus il accumule du Taboo.
+
+**Mécaniques de gain**
+
+| Source | Description | Multiplicateur de base |
+|---|---|---|
+| **Sacrifices au Temple** | Recycler une créature au Temple des Sacrifices génère du Taboo proportionnel à ses stats et sa génération. | [5-20] Taboo par créature |
+| **Décisions morales sombres** | En expédition, certains événements (❓) proposent un choix corrompu (ex: voler des ressources, abandonner une créature blessée). Le choix sombre rapporte du Taboo + rewards matériels. | [10-50] par décision |
+| **Recycling massif** | Détruire plus de [N] créatures en [M] minutes déclenche un bonus de "Frenzy Taboo" (multiplicateur ×[1.5-2.0] pendant [T] minutes). | Multiplicateur temporel |
+| **Bonus passif par run** | Chaque run complété après le 2ème accorde un bonus permanent de [+X%] de gain de Taboo. | [+5%] par run |
+
+**Facteurs de multiplicateurs**
+
+| Facteur | Effet |
+|---|---|
+| **Taux de recyclage** | Pourcentage de créatures recyclées vs créées ce run. Plus le ratio est élevé, plus le multiplicateur est fort (jusqu'à un cap de [×3.0]). |
+| **Nombre de runs** | Bonus cumulatif de [+5%] par run complété après le 1er. |
+| **Ratio morts/créés** | Nombre total de créatures sacrifiées / nombre total créées (across all runs). Influence un multiplicateur global permanent. |
+| **Affinité Élément Ombre** | Les créatures de couleur Violet (Ombre) génèrent [+20%] de Taboo lors de leurs sacrifices. |
+
+**Sinks de Taboo**
+
+| Sink | Description |
+|---|---|
+| **Arbres de compétences (7 péchés)** | Coût principal. Chaque nœud coûte du Taboo. |
+| **Offrandes au Temple** | Offrir du Taboo pour des boosts temporaires (ex: +50% vitesse de breeding pendant 1h). |
+| **Vœux corrompus** | Consommer du Taboo pour modifier un vœu (Wish) en sa version sombre, plus puissante mais avec un malus. |
+
+**Lore et progression narrative**
+
+Le Taboo influence visuellement la base du joueur :
+- **Taboo < 100** : Base normale, ambiance Kawaii dominante.
+- **Taboo 100-500** : Légères teintes sombres, créatures légèrement plus agressives.
+- **Taboo 500-2000** : Transformation visible — ombres, fissures, créatures avec traits sombres.
+- **Taboo > 2000** : Atmosphère dystopique complète, reflétant la corruption maximale du joueur.
+
+Ces effets sont purement cosmétiques et optionnels (peuvent être désactivés dans les options).
+
+#### 7.2.3 Wish
+
+Les vœux sont la ressource de meta-game la plus rare, permettant de personnaliser l'expérience entre les runs et de créer des "builds" de départ uniques.
+
+**Conditions de déblocage**
+
+| Condition | Détail |
+|---|---|
+| **Run minimum** | Disponible à partir du **3ème Rebirth**. |
+| **Taboo total** | Avoir accumulé [500+] Taboo au cours de toutes les runs précédentes. |
+| **Déclenchement** | Le premier Wish est offert gratuitement au 3ème Rebirth. Les suivants se gagnent par milestones. |
+
+**Mécanique de gain**
+
+Les points de Wish se gagnent via des milestones globales (across all runs) :
+
+| Milestone | Reward Wish |
+|---|---|
+| **Zone complétée (multiple de 10)** | +1 Wish |
+| **Génération maximale atteinte (multiple de 5)** | +1 Wish |
+| **Achievement rare** | +[1-3] Wishes selon la difficulté |
+| **Premier run avec Taboo > 1000** | +2 Wishes |
+
+**Types de vœux**
+
+| Type | Description | Impact |
+|---|---|---|
+| **Vœu de Créature** | Réincarner en début de run avec une créature Gen-0 possédant un trait spécial (forme Étoile, couleur Doré, ou +[X] à une stat). | Build de départ spécialisé. Les traits spéciaux s'ajoutent au pool de traits possibles pour toutes les runs futures. |
+| **Vœu d'Objet** | Obtenir un **Artefact** unique (objet permanent, non resetté au Rebirth). Chaque artefact donne un bonus passif spécifique (ex: "+10% vitesse d'exploration", "-20% coût de breeding"). | Accumulable. Maximum [10] artefacts actifs simultanément. |
+| **Vœu de Sagesse** | Débloquer gratuitement **1 nœud** dans un arbre de péché de son choix, sans coût en Taboo. | Accélération de la progression des arbres. Limité à [1] par arbre. |
+| **Vœu de Renaissance** | Bonus de départ pour la prochaine run uniquement : [+X] Fragments initiaux, [+Y%] stats sur les Gen-0 craftés, ou [+Z] slots de créatures. | One-shot par run. Non cumulable avec un autre Vœu de Renaissance. |
+
+**Mécanique de vœu corrompu**
+
+En dépensant du **Taboo supplémentaire**, le joueur peut corrompre un vœu pour en augmenter l'effet :
+
+| Vœu de base | Version corrompue | Coût supplémentaire (Taboo) |
+|---|---|---|
+| Vœu de Créature | Créature Gen-0 avec **2 traits** spéciaux + couleur Ombre | [×2] |
+| Vœu d'Objet | Artefact avec effet **doublé** mais malus visuel (base plus sombre) | [×1.5] |
+| Vœu de Sagesse | **2 nœuds** gratuits dans l'arbre (au lieu de 1) | [×2.5] |
+| Vœu de Renaissance | Bonus de départ **triplés**, mais Taboo initial de [+100] | [×1.5] |
+
+**Impact sur le meta-game**
+
+- **Builds de départ** : Les vœux permettent des stratégies de départ très différentes d'un run à l'autre (ex: run axé breeding via Envie + Vœu de Créature, ou run speedrun via Paresse + Vœu de Renaissance).
+- **Cohésion avec les péchés** : Chaque arbre de péché possède un **nœud de Synergie Wish** qui améliore l'effet des vœux liés à son domaine.
+- **Legacy** : Les artefacts et les traits débloqués par les vœus s'accumulent au fil des runs, créant une progression long terme indépendante du système de prestige Essence.
+
+### 7.3 Coûts (première ébauche — à équilibrer)
 
 | Action | Coût |
 |---|---|
@@ -333,13 +541,53 @@ Plus le run est long et poussé, plus on gagne d'Essence.
 | Envoyer en expédition | Gratuit (mais la créature est occupée) |
 | Upgrade bâtiment Lv. N | N × base_cost Matériaux |
 
-### 7.3 Timers (première ébauche)
+### 7.4 Timers (première ébauche)
 
 | Action | Durée de base |
 |---|---|
 | Exploration d'une case | 30s → 5min (selon difficulté) |
 | Breeding | 2min → 10min (selon génération) |
 | Repos d'une créature | 1min (réduit par CON) |
+
+### 7.5 Bâtiments
+
+La base du joueur est composée de bâtiments upgradables. Chaque bâtiment a une **fonction gameplay** et une **évolution visuelle** liée à la progression narrative (voir section 12.2).
+
+#### 7.5.1 Liste des Bâtiments
+
+| Bâtiment | Fonction principale | Améliorations | Évolution visuelle |
+|---|---|---|---|
+| **Pension / Ranch** | Nourrit et soigne les créatures. Régénère l'endurance après expéditions. Augmente les slots de créatures actives. | Capacité d'accueil, vitesse de repos, qualité de nourriture | Pâturage → Ferme → Élevage intensif |
+| **Maison du Héros** | Hub central. Contient les coffres de stockage et la table de craft. Accès aux menus principaux. | Taille de stockage, slots de craft simultanés | Cabane → Maison → Manoir |
+| **Forge** | Craft et amélioration d'équipements/composants. Transforme les matériaux bruts en composants raffinés. | Recettes débloquées, vitesse de craft, qualité des outputs | Enclume → Atelier → Fonderie |
+| **Temple des Sacrifices** | Permet de **recycler** les créatures faibles en ressources (fragments, essence mineure, nourriture). Déblocage de bonus temporaires via offrandes. | Types de sacrifices, rendement, bonus rituel | Autel de pierre → Temple → Abattoir rituel |
+| **Laboratoire de Breeding** | Centre de breeding et d'expérimentation. Affiche la prédiction hexagonale. Permet les mutations (si débloquées). | Slots de breeding, réduction timer, bonus mutation | Tour de mage → Labo → Usine de mutations |
+| **Mairie** | Gestion de la base : extension du territoire, placement des bâtiments, déblocage de nouvelles zones de construction. | Territoire max, nombre de bâtiments, vitesse de construction | Panneau → Bureau → Hôtel de ville |
+
+#### 7.5.2 Système d'Upgrade des Bâtiments
+
+Chaque bâtiment a **N niveaux** (à équilibrer). Le coût augmente par palier :
+
+```
+Coût_upgrade(Lv) = base_cost × Lv × multiplicateur
+```
+
+| Ressource utilisée | Bâtiments concernés |
+|---|---|
+| **Fragments** | Tous (coût de base) |
+| **Matériaux** | Forge, Maison, Mairie |
+| **Essence de créature** (recyclage) | Temple, Laboratoire |
+
+#### 7.5.3 Déblocage des Bâtiments
+
+| Bâtiment | Disponible | Condition |
+|---|---|---|
+| Maison du Héros | Run 1, début | Toujours disponible |
+| Pension / Ranch | Run 1, après 1er craft | Crafter sa première créature |
+| Forge | Run 1, après 1ère expédition | Compléter la zone 1 |
+| Temple des Sacrifices | Run 2+ | Achat prestige (Essence) |
+| Laboratoire de Breeding | Run 1, après 1er breeding | Réussir un premier breeding |
+| Mairie | Run 2+ | Achat prestige (Essence) |
 
 ---
 
@@ -454,179 +702,11 @@ La base du joueur évolue visuellement au fil de la progression, reflétant la c
 
 ---
 
-## 13. Bâtiments
-La base du joueur est composée de bâtiments upgradables. Chaque bâtiment a une **fonction gameplay** et une **évolution visuelle** liée à la progression narrative (voir section 12.2).
 
-### 13.1 Liste des Bâtiments
+## 13. Les 7 Arbres de Péchés
 
-| Bâtiment | Fonction principale | Améliorations | Évolution visuelle |
-|---|---|---|---|
-| **Pension / Ranch** | Nourrit et soigne les créatures. Régénère l'endurance après expéditions. Augmente les slots de créatures actives. | Capacité d'accueil, vitesse de repos, qualité de nourriture | Pâturage → Ferme → Élevage intensif |
-| **Maison du Héros** | Hub central. Contient les coffres de stockage et la table de craft. Accès aux menus principaux. | Taille de stockage, slots de craft simultanés | Cabane → Maison → Manoir |
-| **Forge** | Craft et amélioration d'équipements/composants. Transforme les matériaux bruts en composants raffinés. | Recettes débloquées, vitesse de craft, qualité des outputs | Enclume → Atelier → Fonderie |
-| **Temple des Sacrifices** | Permet de **recycler** les créatures faibles en ressources (fragments, essence mineure, nourriture). Déblocage de bonus temporaires via offrandes. | Types de sacrifices, rendement, bonus rituel | Autel de pierre → Temple → Abattoir rituel |
-| **Laboratoire de Breeding** | Centre de breeding et d'expérimentation. Affiche la prédiction hexagonale. Permet les mutations (si débloquées). | Slots de breeding, réduction timer, bonus mutation | Tour de mage → Labo → Usine de mutations |
-| **Mairie** | Gestion de la base : extension du territoire, placement des bâtiments, déblocage de nouvelles zones de construction. | Territoire max, nombre de bâtiments, vitesse de construction | Panneau → Bureau → Hôtel de ville |
+> **Note :** Les ressources avancées (Gold, Taboo, Wish) sont documentées dans la section 7.2 — Économie & Ressources Avancées.
 
-### 13.2 Système d'Upgrade des Bâtiments
-
-Chaque bâtiment a **N niveaux** (à équilibrer). Le coût augmente par palier :
-
-```
-Coût_upgrade(Lv) = base_cost × Lv × multiplicateur
-```
-
-| Ressource utilisée | Bâtiments concernés |
-|---|---|
-| **Fragments** | Tous (coût de base) |
-| **Matériaux** | Forge, Maison, Mairie |
-| **Essence de créature** (recyclage) | Temple, Laboratoire |
-
-### 13.3 Déblocage des Bâtiments
-
-| Bâtiment | Disponible | Condition |
-|---|---|---|
-| Maison du Héros | Run 1, début | Toujours disponible |
-| Pension / Ranch | Run 1, après 1er craft | Crafter sa première créature |
-| Forge | Run 1, après 1ère expédition | Compléter la zone 1 |
-| Temple des Sacrifices | Run 2+ | Achat prestige (Essence) |
-| Laboratoire de Breeding | Run 1, après 1er breeding | Réussir un premier breeding |
-| Mairie | Run 2+ | Achat prestige (Essence) |
-
-<!-- Traité par Agent Concepteur : création de la section Bâtiments complète avec liste, upgrades, déblocage et lien vers la progression narrative -->
-
-# 14. Core engine
-## 14.1 Ressources 
-
-Dans cette partie nous allons détaillé les différentes ressources du jeu et leur utilisation.
-
-### Gold
-
-Le Gold est la monnaie de commerce et de luxe du late-game, distincte des Fragments (monnaie de base d'un run). Il matérialise la richesse accumulée au-delà de la simple survie.
-
-#### Sources de production
-
-| Source | Description | Disponibilité |
-|---|---|---|
-| **Vente de créatures** | Les créatures Gen-2+ peuvent être vendues sur le marché. Le prix dépend de la génération, des stats et des traits rares. | Run 2+ (débloqué via Mairie) |
-| **Expéditions — Cases Trésor** | Certaines cases spéciales (rares) rapportent du Gold directement. | Run 2+, haute CHA augmente la fréquence |
-| **Bâtiment : Bourse** | Débloqué Run 3+ via prestige. Génère passivement des intérêts sur le Gold stocké. | Run 3+ |
-| **Réalisations (Achievements)** | Milestones globaux (créatures créées, runs complétés, etc.) donnent des bonus de Gold. | Permanent |
-
-#### Sinks de Gold
-
-| Sink | Description | Impact |
-|---|---|---|
-| **Accélérations** | Payer du Gold pour instantanément terminer un timer (craft, breeding, exploration). | Qualité de vie |
-| **Upgrades de bâtiments avancés** | Certains niveaux ultimes de bâtiments (niveaux 10+) nécessitent du Gold. | Puissance |
-| **Décorations & Skins** | Achat cosmétique pour la base et les créatures. | Personnalisation |
-| **Donations à l'Orgueil** | Offrir du Gold dans l'arbre Orgueil pour débloquer des visiteurs prestigieux. | Progression |
-
-#### Caps et équilibrage
-
-- **Soft cap par run** : Les ventes de créatures de même génération subissent des rendements décroissants (diminishing returns). Vendre 10 créatures Gen-5 rapporte moins que vendre 10 créatures de générations variées.
-- **Hard cap temporaire** : Le Gold se reset au Rebirth, sauf les upgrades permanents achetés avec Gold et les décorations.
-- **Intérêts de la Bourse** : Plafonnés à [X]% du total de Fragments convertis ce run.
-
-<!-- Traité par Agent Concepteur : détail des sources (vente, trésors, bourse, achievements), sinks (accélérations, upgrades avancés, cosmétiques, donations Orgueil), et mécanique de soft cap avec diminishing returns sur les ventes de créatures -->
-
-### Taboo
-
-Le Taboo est la ressource "morale" du jeu, matérialisant la corruption progressive du joueur. Plus le joueur adopte des comportements sombres (sacrifices, exploitation), plus il accumule du Taboo.
-
-#### Mécaniques de gain
-
-| Source | Description | Multiplicateur de base |
-|---|---|---|
-| **Sacrifices au Temple** | Recycler une créature au Temple des Sacrifices génère du Taboo proportionnel à ses stats et sa génération. | [5-20] Taboo par créature |
-| **Décisions morales sombres** | En expédition, certains événements (❓) proposent un choix corrompu (ex: voler des ressources, abandonner une créature blessée). Le choix sombre rapporte du Taboo + rewards matériels. | [10-50] par décision |
-| **Recycling massif** | Détruire plus de [N] créatures en [M] minutes déclenche un bonus de "Frenzy Taboo" (multiplicateur ×[1.5-2.0] pendant [T] minutes). | Multiplicateur temporel |
-| **Bonus passif par run** | Chaque run complété après le 2ème accorde un bonus permanent de [+X%] de gain de Taboo. | [+5%] par run |
-
-#### Facteurs de multiplicateurs
-
-| Facteur | Effet |
-|---|---|
-| **Taux de recyclage** | Pourcentage de créatures recyclées vs créées ce run. Plus le ratio est élevé, plus le multiplicateur est fort (jusqu'à un cap de [×3.0]). |
-| **Nombre de runs** | Bonus cumulatif de [+5%] par run complété après le 1er. |
-| **Ratio morts/créés** | Nombre total de créatures sacrifiées / nombre total créées (across all runs). Influence un multiplicateur global permanent. |
-| **Affinité Élément Ombre** | Les créatures de couleur Violet (Ombre) génèrent [+20%] de Taboo lors de leurs sacrifices. |
-
-:S: liberté de l'agent mais ça peut faire office de shiny
-
-#### Sinks de Taboo
-
-| Sink | Description |
-|---|---|
-| **Arbres de compétences (7 péchés)** | Coût principal. Chaque nœud coûte du Taboo. |
-| **Offrandes au Temple** | Offrir du Taboo pour des boosts temporaires (ex: +50% vitesse de breeding pendant 1h). |
-| **Vœux corrompus** | Consommer du Taboo pour modifier un vœu (Wish) en sa version sombre, plus puissante mais avec un malus. |
-
-#### Lore et progression narrative
-
-Le Taboo influence visuellement la base du joueur :
-- **Taboo < 100** : Base normale, ambiance Kawaii dominante.
-- **Taboo 100-500** : Légères teintes sombres, créatures légèrement plus agressives.
-- **Taboo 500-2000** : Transformation visible — ombres, fissures, créatures avec traits sombres.
-- **Taboo > 2000** : Atmosphère dystopique complète, reflétant la corruption maximale du joueur.
-
-Ces effets sont purement cosmétiques et optionnels (peuvent être désactivés dans les options).
-
-<!-- Traité par Agent Concepteur : mécaniques de gain (sacrifices, décisions sombres, recycling massif, bonus run), multiplicateurs (ratio recyclage, runs, morts/créés, affinité Ombre), sinks (7 péchés, offrandes, vœux corrompus), et lien narratif avec la corruption visuelle progressive -->
-
-### Wish
-
-Les vœux sont la ressource de meta-game la plus rare, permettant de personnaliser l'expérience entre les runs et de créer des "builds" de départ uniques.
-
-#### Conditions de déblocage
-
-| Condition | Détail |
-|---|---|
-| **Run minimum** | Disponible à partir du **3ème Rebirth**. |
-| **Taboo total** | Avoir accumulé [500+] Taboo au cours de toutes les runs précédentes. |
-| **Déclenchement** | Le premier Wish est offert gratuitement au 3ème Rebirth. Les suivants se gagnent par milestones. |
-
-#### Mécanique de gain
-
-Les points de Wish se gagnent via des milestones globales (across all runs) :
-
-| Milestone | Reward Wish |
-|---|---|
-| **Zone complétée (multiple de 10)** | +1 Wish |
-| **Génération maximale atteinte (multiple de 5)** | +1 Wish |
-| **Achievement rare** | +[1-3] Wishes selon la difficulté |
-| **Premier run avec Taboo > 1000** | +2 Wishes |
-
-#### Types de vœux
-
-| Type | Description | Impact |
-|---|---|---|
-| **Vœu de Créature** | Réincarner en début de run avec une créature Gen-0 possédant un trait spécial (forme Étoile, couleur Doré, ou +[X] à une stat). | Build de départ spécialisé. Les traits spéciaux s'ajoutent au pool de traits possibles pour toutes les runs futures. |
-| **Vœu d'Objet** | Obtenir un **Artefact** unique (objet permanent, non resetté au Rebirth). Chaque artefact donne un bonus passif spécifique (ex: "+10% vitesse d'exploration", "-20% coût de breeding"). | Accumulable. Maximum [10] artefacts actifs simultanément. |
-| **Vœu de Sagesse** | Débloquer gratuitement **1 nœud** dans un arbre de péché de son choix, sans coût en Taboo. | Accélération de la progression des arbres. Limité à [1] par arbre. |
-| **Vœu de Renaissance** | Bonus de départ pour la prochaine run uniquement : [+X] Fragments initiaux, [+Y%] stats sur les Gen-0 craftés, ou [+Z] slots de créatures. | One-shot par run. Non cumulable avec un autre Vœu de Renaissance. |
-
-#### Mécanique de vœu corrompu
-
-En dépensant du **Taboo supplémentaire**, le joueur peut corrompre un vœu pour en augmenter l'effet :
-
-| Vœu de base | Version corrompue | Coût supplémentaire (Taboo) |
-|---|---|---|
-| Vœu de Créature | Créature Gen-0 avec **2 traits** spéciaux + couleur Ombre | [×2] |
-| Vœu d'Objet | Artefact avec effet **doublé** mais malus visuel (base plus sombre) | [×1.5] |
-| Vœu de Sagesse | **2 nœuds** gratuits dans l'arbre (au lieu de 1) | [×2.5] |
-| Vœu de Renaissance | Bonus de départ **triplés**, mais Taboo initial de [+100] | [×1.5] |
-
-#### Impact sur le meta-game
-
-- **Builds de départ** : Les vœux permettent des stratégies de départ très différentes d'un run à l'autre (ex: run axé breeding via Envie + Vœu de Créature, ou run speedrun via Paresse + Vœu de Renaissance).
-- **Cohésion avec les péchés** : Chaque arbre de péché possède un **nœud de Synergie Wish** qui améliore l'effet des vœux liés à son domaine.
-- **Legacy** : Les artefacts et les traits débloqués par les vœus s'accumulent au fil des runs, créant une progression long terme indépendante du système de prestige Essence.
-
-<!-- Traité par Agent Concepteur : mécanique de gain par milestones, 4 types de vœux (Créature, Objet, Sagesse, Renaissance), système de vœu corrompu via Taboo, et impact meta-game sur les builds de départ et la progression long terme -->
-## 14.2 Augmentation — Les 7 Arbres de Péchés
-
-Les arbres de compétences sont alimentés par la ressource **Taboo**. Chaque arbre représente l'un des 7 péchés capitaux et offre des bonus spécialisés liés à un aspect du gameplay. Les nœuds sont permanents entre les runs mais se resettent au Rebirth — à moins d'avoir dépensé un **Vœu de Sagesse** ou un **Vœu d'Objet** (artefact de préservation).
 
 ### Structure commune
 

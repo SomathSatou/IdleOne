@@ -85,9 +85,22 @@ Cette balise dans la section Breeding signale que la formule actuelle (`floor = 
 
 ## Documentation
 
-- **`GDD.md`** — Game Design Document complet (créatures, craft, breeding, expéditions, prestige, économie)
+- **`GDD.md`** — Game Design Document complet : créatures, craft & breeding, expéditions & monde top-down, économie & bâtiments, rebirth & prestige, progression par run, les 7 arbres de péchés, direction artistique
 - **`AGENTS.md`** — Configuration et workflow des agents IA
 - **`agents/`** — Définitions détaillées de chaque agent
+
+---
+
+## Mode Top-Down & Exploration
+
+Au-delà des écrans de gestion, IdleOne propose une couche d'exploration **top-down** qui spatialise l'expérience. Les détails complets sont dans le GDD [§5.6](GDD.md#56-monde-top-down--exploration).
+
+- **Village & Ferme** : le joueur se déplace librement dans un village (place centrale, marché) et sur sa **ferme de créatures** (enclos, pâturages, bâtiments).
+- **Caméra & Contrôles** : vue top-down orthographique ou légèrement isométrique, déplacement au clavier (ZQSD / WASD) ou click-to-move.
+- **Changement de map** : transitions entre le village, l'intérieur des bâtiments (Maison du Héros, Forge, Laboratoire), et les zones d'expédition.
+- **PNJ** : villageois, marchands, quêteurs et visiteurs prestigieux (liés à l'arbre Orgueil). Ils suivent des **routines de déplacement** : patrouilles, horaires jour/nuit, réactions contextuelles.
+- **Interactions** : approche d'une machine → touche d'interaction → UI dédiée ; dialogue avec PNJ pour quêtes, commerce et lore ; inspection directe des créatures dans l'enclos.
+- **Environnement vivant** : les créatures errent dans leurs enclos avec des comportements simples (faim, sommeil, panique si échappées).
 
 ---
 

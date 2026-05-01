@@ -1,6 +1,6 @@
-# Roadmap IdleOne — v0.1 → v1.0
+# Roadmap IdleOne — v0.1.0 → v1.0.0
 
-Ce document trace les étapes d'implémentation progressive du jeu, du prototype breeding minimal jusqu'à la version complète avec tous les systèmes documentés dans le [GDD](GDD.md).
+Ce document trace les étapes d'implémentation progressive du jeu, du prototype minimal jusqu'à la version complète avec tous les systèmes documentés dans le [GDD](GDD.md).
 
 ---
 
@@ -12,7 +12,13 @@ Ce document trace les étapes d'implémentation progressive du jeu, du prototype
 
 ---
 
-## v0.1 — Écran Breeding Minimal
+## v0.1 — Fondations Créature & UI
+
+### v0.1.0 — Baseline actuelle (terminé)
+
+- Mock créature avec 6 stats en `string`, UI PV + statut Actif/Incapacité.
+
+### v0.1.1 — Écran Breeding Minimal
 
 Objectif : un écran fonctionnel avec 3 panneaux et un résultat de breeding.
 
@@ -21,131 +27,288 @@ Objectif : un écran fonctionnel avec 3 panneaux et un résultat de breeding.
 - **Mécanique** : bouton "Breed" générant un enfant Gen-1 via formule simplifiée (moyenne des parents + variance aléatoire).
 - **Visualisation** : stats affichées en texte (pas d'hexagone graphique).
 
+### v0.1.2 — Affichage Stats & Refactor Modèle
+
+- **Carte créature** : affichage nom, PV max, statut, génération, composants.
+- **Refactor** : introduction des classes `Skeleton`, `Shape`, `Color` (remplacer les `string` du modèle actuel).
+
 ---
 
-## v0.2 — Formules de Breeding & Craft Gen-0
+## v0.2 — Mécaniques de Créature (Craft & Breeding)
 
-Objectif : implémenter les formules du GDD et le système de craft déterministe.
+### v0.2.0 — Formules de Breeding Complètes
 
-- **Breeding** : formule complète GDD §4.2 avec `variance_factor`, floor/ceil, `breeding_min/max_bonus`.
-- **Craft Gen-0** : `Squelette + Forme + Couleur → Créature` (formule déterministe §4.1).
-- **Refactor** : classes `Skeleton`, `Shape`, `Color` (remplacer les `string` du modèle actuel).
+Objectif : implémenter les formules du GDD §4.
+
+- **Breeding** : formule complète avec `variance_factor`, floor/ceil, `breeding_min/max_bonus`.
+- **Régression** : un enfant peut être moins bon que ses parents.
+
+### v0.2.1 — Craft Gen-0 Déterministe
+
+- **Craft** : `Squelette + Forme + Couleur → Créature` (formule déterministe §4.1).
 - **UI** : écran de sélection des composants pour le craft.
 
+### v0.2.2 — Héritage & Mutations de Base
+
+- **Héritage** : règles de transmission squelette/forme/couleur.
+- **Mutations** : probabilité de base, formes/couleurs rares (Étoile, Doré, Arc-en-ciel).
+
 ---
 
-## v0.3 — Visualisation Créature & Hexagone Stats
+## v0.3 — Visualisation & Data Créature
+
+### v0.3.0 — Radar Chart Hexagone
 
 Objectif : rendre les stats visuellement lisibles via un radar chart.
 
-- **Radar chart** : hexagone affichant les 6 stats (Force, Agilité, Intelligence, Chance, Constitution, Volonté).
-- **Carte créature** : affichage nom, PV max, statut, génération, composants.
-- **Refactor** : `Creature.cs` utilisant les classes composants de v0.2.
+- **Hexagone** : affichage des 6 stats (Force, Agilité, Intelligence, Chance, Constitution, Volonté).
+- **Prédiction** : zone probable en breeding (min/max des parents).
+
+### v0.3.1 — Refactor Creature.cs
+
+- **Intégration** : `Creature.cs` utilisant les classes composants de v0.2.
+- **Stats dérivées** : PV, endurance d'expédition.
 
 ---
 
-## v0.4 — Expéditions & Zones
+## v0.4 — Monde Top-Down & Spatialité
+
+### v0.4.0 — Caméra, Contrôles & Transitions
+
+Objectif : donner une spatialité au hub du joueur.
+
+- **Caméra** : vue top-down orthographique ou légèrement isométrique.
+- **Contrôles** : déplacement clavier (ZQSD / WASD) ou click-to-move. Sprint (Shift).
+- **Transitions** : portes/zones entre village, ferme intérieure, bâtiments (Maison, Forge, Labo).
+
+### v0.4.1 — Village & PNJ de Base
+
+- **Zones** : place centrale, marché, zone de farming, entrée expéditions.
+- **PNJ** : villageois (lore), marchands (jour), quêteurs. Routines : patrouille, horaires jour/nuit.
+
+### v0.4.2 — Ferme de Créatures & Enclos
+
+- **Enclos** : créatures actives visibles, comportements simples (errance, faim, sommeil).
+- **Interactions** : approche → inspection rapide (nom, PV) ou nourrir.
+
+---
+
+## v0.5 — Expéditions & Exploration
+
+### v0.5.0 — Grille & Fog of War
 
 Objectif : envoyer une créature explorer une grille et rapporter des ressources.
 
 - **Grille** : zones carrées avec fog of war (§5.1).
 - **Cases** : Ressource, Combat, Événement, Boss, Vide, Cachée (§5.2).
-- **Exploration** : sélection créature + case adjacente, timer idle, récompenses.
-- **Stats d'expédition** : vision (INT), vitesse (AGI), endurance (CON), offline (VOL), drops (CHA), combat (FOR).
-- **Progression** : compléter une zone débloque la suivante.
+
+### v0.5.1 — Mécanique d'Exploration
+
+- **Sélection** : créature + case adjacente révélée.
+- **Timer idle** : durée basée sur difficulté − AGI de la créature.
+- **Récompenses** : ressources, déblocages, cases adjacentes révélées.
+
+### v0.5.2 — Stats d'Expédition & Progression
+
+- **Scaling** : vision (INT), vitesse (AGI), endurance (CON), offline (VOL), drops (CHA), combat (FOR).
+- **Progression** : compléter une zone débloque la suivante. Scaling taille grille par run.
 
 ---
 
-## v0.5 — Économie de Base & Bâtiments
+## v0.6 — Économie de Base & Bâtiments
 
-Objectif : clic/idle, ressources, et premiers bâtiments fonctionnels.
+### v0.6.0 — Ressources & Clic/Idle
 
-- **Ressources** : Fragments (clic/idle), Formes, Couleurs, Matériaux (expéditions).
-- **Bâtiments Run 1** : Maison du Héros (hub), Pension/Ranch (soin/repos), Forge (craft/composants), Laboratoire de Breeding.
-- **Upgrades** : coût matériaux, effets de niveau (§13.2).
+Objectif : clic/idle, ressources de base.
+
+- **Fragments** : monnaie de base (clic + idle).
+- **Formes / Couleurs / Matériaux** : drops d'expédition.
+
+### v0.6.1 — Bâtiments Run 1
+
+- **Maison du Héros** : hub central, stockage, craft.
+- **Pension / Ranch** : soigne, régénère endurance, augmente slots créatures.
+- **Forge** : craft et amélioration de composants.
+- **Laboratoire de Breeding** : centre breeding, prédiction hexagone.
+
+### v0.6.2 — Upgrades & Timers
+
+- **Upgrades** : coût matériaux, effets de niveau (§7.5.2).
 - **Timers** : exploration, breeding, repos.
 
 ---
 
-## v0.6 — Rebirth & Prestige (Essence)
+## v0.7 — Rebirth & Prestige (Essence)
+
+### v0.7.0 — Système de Rebirth
 
 Objectif : introduire la boucle de reset/progression permanente.
 
+- **Déclenchement** : suggestion quand progression stagne.
 - **Essence** : calcul basé sur zones explorées, créatures créées, gen max, temps de run.
+
+### v0.7.1 — Reset / Garde
+
 - **Reset** : créatures, ressources, zones, niveaux bâtiments.
-- **Garde** : Essence cumulée, upgrades prestige, squelettes/formes/couleurs débloqués, achievements.
-- **Boutique prestige** : Breeding Min+/Max+, Stats Craft+, Slot Créature+, Mutation Unlock, Idle Speed+, etc. (§6.5).
+- **Garde** : Essence cumulée, squelettes/formes/couleurs débloqués, achievements.
+
+### v0.7.2 — Boutique Prestige
+
+- **Upgrades** : Breeding Min+/Max+, Stats Craft+, Slot Créature+, Mutation Unlock, Idle Speed+, etc. (§6.5).
+- **Nouveaux Squelettes** : déblocables avec Essence.
 
 ---
 
-## v0.7 — Mutations & Prédiction de Breeding
+## v0.8 — Mutations & Prédiction Avancée
 
-Objectif : rendre le breeding plus profond avec des surprises et une UI informative.
+### v0.8.0 — Système de Mutations Complet
 
-- **Mutations** : ~5% par breeding, débloqué après 1er rebirth. Formes/couleurs rares (Étoile, Doré, Arc-en-ciel).
-- **Régression** : un enfant peut être moins bon que ses parents (§4.2).
-- **Prédiction UI** : hexagone Parent A (bleu), Parent B (rouge), zone probable enfant (vert semi-transparent = fourchette min/max).
+- **Unlock** : débloqué après 1er rebirth (achat prestige).
+- **Rate** : ~5% par breeding (augmentable).
+- **Formes/Couleurs rares** : Étoile, Doré, Arc-en-ciel.
+
+### v0.8.1 — Prédiction de Breeding (UI)
+
+- **Hexagone Parent A** (bleu), **Parent B** (rouge).
+- **Zone probable enfant** (vert semi-transparent = fourchette min/max).
+
+### v0.8.2 — Équilibrage & Affinages
+
+- **Régression** : variance_factor, floor, plafonds.
+- **Inbreeding** : malus si parents trop proches (lien avec arbre Envie).
 
 ---
 
-## v0.8 — Ressources Avancées (Gold, Taboo, Wish)
+## v0.9 — Ressources Avancées (Gold, Taboo, Wish)
 
-Objectif : ajouter les ressources de late-game et leurs mécaniques.
+### v0.9.0 — Gold & Commerce
 
-- **Gold** : vente de créatures Gen-2+, cases Trésor, bourse (Run 3+). Sinks : accélérations, upgrades avancés, cosmétiques.
-- **Taboo** : sacrifices au Temple, décisions sombres en expédition, recycling massif. Sinks : arbres de péchés, offrandes, vœux corrompus.
-- **Wish** : débloqué Run 3+, gagné par milestones. 4 types (Créature, Objet, Sagesse, Renaissance) + versions corrompues via Taboo.
-- **Bâtiment** : Temple des Sacrifices (Run 2+).
+Objectif : ajouter la monnaie de late-game.
+
+- **Sources** : vente créatures Gen-2+, cases Trésor, Bourse (Run 3+).
+- **Sinks** : accélérations, upgrades avancés, cosmétiques, donations Orgueil.
+
+### v0.9.1 — Taboo & Corruption
+
+- **Sources** : sacrifices au Temple, décisions sombres en expédition, recycling massif.
+- **Sinks** : arbres de péchés, offrandes, vœux corrompus.
+- **Narratif** : transformation visuelle de la base selon le niveau de Taboo.
+
+### v0.9.2 — Wish & Meta-Game
+
+- **Déblocage** : Run 3+, accumulé 500+ Taboo, milestones globales.
+- **Types** : Créature, Objet (Artefacts), Sagesse, Renaissance.
+- **Corrompus** : versions améliorées via Taboo supplémentaire.
 
 ---
 
-## v0.9 — Les 7 Arbres de Péchés
+## v0.10 — Les 7 Arbres de Péchés
 
-Objectif : système d'augmentation profond alimenté par le Taboo.
+### v0.10.0 — Colère (Wrath)
 
-- **7 arbres** : Colère, Cupidité, Gourmandise, Orgueil, Envie, Paresse, Luxure.
-- **Structure** : 10 nœuds / arbre, 3 tiers (Fondation/Spécialisation/Maîtrise), coûts en Taboo.
-- **Branches mutuellement exclusives** : certains nœuds offrent 2-3 choix (ex: Carnage vs Fureur).
+- 10 nœuds, tiers Fondation/Spécialisation/Maîtrise.
+- Focus : dégâts, combat, expédition, forme exclusive Étoile Rouge.
+
+### v0.10.1 — Cupidité (Greed) & Gourmandise (Gluttony)
+
+- **Cupidité** : Gold, Fragments, intérêts, bâtiment exclusif Fontaine de Richesse.
+- **Gourmandise** : cuisine, buffs nourriture, repas avancés, buffs permanents.
+
+### v0.10.2 — Orgueil (Pride), Envie (Envy) & Paresse (Sloth)
+
+- **Orgueil** : visiteurs prestigieux, renommée, transformation finale visuelle.
+- **Envie** : optimisation breeding, clonage, designer génétique.
+- **Paresse** : timers réduits, auto-craft, auto-breeding, offline boost.
+
+### v0.10.3 — Luxure (Lust) & Synergies Globales
+
+- **Luxure** : charme/CHA, événements nocturnes, Festivités globales.
 - **Synergies** : effets cumulatifs entre arbres (ex: Colère + Cupidité = +Gold sur Boss).
 
 ---
 
 ## v1.0 — Version Complète
 
-Objectif : jeu jouable de bout en bout, équilibré et poli.
+### v1.0.0 — Intégration & Boucle Fermée
 
-- **Tous les systèmes** intégrés : craft, breeding, expéditions, économie, prestige, bâtiments, mutations, 7 péchés, Gold, Taboo, Wish.
-- **Progression narrative visuelle** : base qui évolole d'Arche → Ferme → Usine → Complexe dystopique (§12.2).
-- **Équilibrage** : coûts, timers, courbes de progression, diminishing returns.
-- **Polish** : UI/UX, animations, feedback, achievements, statistiques globales.
-- **Documentation** : builds, déploiement, guide de démarrage.
+- **Tous les systèmes** connectés : craft → breed → expédition → économie → prestige → mutations → 7 péchés → Gold/Taboo/Wish.
+- **Progression narrative visuelle** : base Arche → Ferme → Usine → Complexe dystopique (§12.2).
+
+### v1.0.1 — Équilibrage
+
+- Coûts, timers, courbes de progression, diminishing returns.
+- Soft caps, hard caps, intérêts plafonnés.
+
+### v1.0.2 — Polish UI/UX
+
+- Animations, feedback, transitions, bulles d'action.
+- Refonte des écrans de gestion (Gestionnaire v2).
+
+### v1.0.3 — Contenu Additionnel
+
+- Achievements, statistiques globales, milestones cachées.
+- Événements ponctuels (festival, météo).
+
+### v1.0.4 — Packaging & Documentation
+
+- Builds, déploiement, guide de démarrage.
+- Procédures de test et benchmarks de performance.
 
 ---
 
 ## Dépendances Entre Versions
 
 ```text
-v0.1 (UI breeding) ──► v0.2 (formules + craft) ──► v0.3 (hexagone + refactor)
-     │                                                   │
-     └───────────────────────────────────────────────────┘
+v0.1.0 ──► v0.1.1 ──► v0.1.2
+   │         │          │
+   └─────────┴──────────┘
+            │
+            ▼
+      v0.2.0 ──► v0.2.1 ──► v0.2.2
+         │                       │
+         └───────────────────────┘
+                      │
+                      ▼
+               v0.3.0 ──► v0.3.1
+                  │
+                  ▼
+           v0.4.0 ──► v0.4.1 ──► v0.4.2
+              │                       │
+              └───────────────────────┘
                            │
                            ▼
-                    v0.4 (expéditions) ──► v0.5 (économie + bâtiments)
-                                                   │
-                                                   ▼
-                                           v0.6 (prestige Essence)
-                                                   │
-                                                   ▼
-                                           v0.7 (mutations)
-                                                   │
-                                                   ▼
-                                           v0.8 (Gold/Taboo/Wish)
-                                                   │
-                                                   ▼
-                                           v0.9 (7 péchés)
-                                                   │
-                                                   ▼
-                                           v1.0 (complète)
+                    v0.5.0 ──► v0.5.1 ──► v0.5.2
+                       │                       │
+                       └───────────────────────┘
+                                    │
+                                    ▼
+                             v0.6.0 ──► v0.6.1 ──► v0.6.2
+                                │                       │
+                                └───────────────────────┘
+                                             │
+                                             ▼
+                                      v0.7.0 ──► v0.7.1 ──► v0.7.2
+                                         │                       │
+                                         └───────────────────────┘
+                                                      │
+                                                      ▼
+                                               v0.8.0 ──► v0.8.1 ──► v0.8.2
+                                                  │                       │
+                                                  └───────────────────────┘
+                                                               │
+                                                               ▼
+                                                        v0.9.0 ──► v0.9.1 ──► v0.9.2
+                                                           │                       │
+                                                           └───────────────────────┘
+                                                                        │
+                                                                        ▼
+                                                                 v0.10.0 ──► v0.10.1
+                                                                      │          │
+                                                                      ▼          ▼
+                                                                 v0.10.2 ──► v0.10.3
+                                                                      │
+                                                                      ▼
+                                                               v1.0.0 → v1.0.1 → v1.0.2 → v1.0.3 → v1.0.4
 ```
 
 ---

@@ -31,10 +31,13 @@ Quand tu analyses la documentation, tu dois rechercher et traiter les balises su
 | `:P:` | **Prozengan** | Problème | Le collaborateur signale un problème ou une incohérence. Tu dois diagnostiquer le problème, proposer une correction, et mettre à jour la section concernée. |
 | `:A:` | **Akoia** | Amélioration | Le collaborateur demande une amélioration d'une section. Tu dois enrichir, restructurer ou compléter la section concernée. |
 | `:L:` | **Libebulle** | Question | Le collaborateur pose une question ou suggère un point à clarifier. Tu dois apporter une réponse argumentée et mettre à jour la documentation si nécessaire. |
+| `:IA:` | **Agent IA** | Amélioration proposée par IA | Un agent IA (Développeur ou Testeur) propose une amélioration ou soulève un point. Tu dois analyser la proposition, la développer si elle est pertinente, et l'intégrer proprement dans la documentation. |
+
+**Règle stricte :** Tu ne dois **jamais** générer les balises `:S:`, `:P:`, `:A:` ou `:L:` — elles sont réservées aux collaborateurs humains. Si tu veux proposer une amélioration, tu utilises exclusivement `:IA:`.
 
 ### Processus de traitement des balises
 
-1. **Scanner** les fichiers `.md` à la recherche de balises `:S:`, `:P:`, `:A:`, `:L:`
+1. **Scanner** les fichiers `.md` à la recherche de balises `:S:`, `:P:`, `:A:`, `:L:` et `:IA:`
 2. **Lire le contexte** autour de la balise (section, paragraphe, tableau)
 3. **Analyser** la demande implicite ou explicite du collaborateur
 4. **Proposer** une modification documentée et argumentée
