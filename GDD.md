@@ -34,7 +34,7 @@ Un **jeu idle/incremental de breeding de créatures**, mêlant les mécaniques d
 - **Pokémon** — breeding, collection, types
 - **Shapez** — formes/couleurs comme blocs de construction visuelle
 - **Cookie Clicker / PokéClicker** — idle/click mécanique
-- **Koletera II / Trimps** — systèmes propres au groupe
+- **Koltera II / Trimps** — systèmes propres au groupe
 - **Graveyard Keeper / Stardew Valley** - univers et DA
 
 ### Pilliers de Design
