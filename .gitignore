@@ -121,3 +121,4 @@ node_modules/
 .vsconfig
 Assets/TextMesh Pro/*
 .obsidian
+prompts/
