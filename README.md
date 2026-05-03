@@ -4,6 +4,44 @@ Projet de jeu idle/incremental de breeding de créatures.
 
 ---
 
+## Setup de l'environnement de travail
+
+### Versions requises
+
+- **Unity** : `6000.4.5f1` (Unity 6, LTS)
+- **Pipeline de rendu** : Built-in Render Pipeline (URP désactivé temporairement — voir note technique ci-dessous)
+- **IDE recommandés** : Visual Studio 2022 ou JetBrains Rider (package `com.unity.ide.rider` inclus)
+
+### Packages Unity clés
+
+| Package | Version | Rôle |
+|---|---|---|
+| Input System | `1.19.0` | Gestion des entrées clavier/souris |
+| AI Navigation | `2.0.12` | Pathfinding des PNJ et créatures |
+| TextMeshPro | `3.0.9` | Rendu texte UI |
+| Test Framework | `1.6.0` | Tests unitaires (dédié à l'agent Testeur) |
+| Timeline | `1.8.12` | Séquences cinématiques / événements |
+
+### Clone et ouverture du projet
+
+1. **Cloner** le repository :
+   ```bash
+   git clone <url-du-repo> IdleOne
+   ```
+2. **Ouvrir** Unity Hub → **Add** → sélectionner le dossier `IdleOne`
+3. **Lancer** le projet avec Unity `6000.4.5f1` (Unity Hub téléchargera l'éditeur si nécessaire)
+4. **Scènes de démo** disponibles :
+   - `Assets/Scenes/DemoBreed.unity` — Système de breeding
+   - `Assets/Scenes/DemoSpwanCreature.unity` — Spawn et UI créature
+
+### Bonnes pratiques
+
+- Ne pas modifier le pipeline de rendu : rester en **Built-in** pour éviter l'erreur de compilation `CS8347` liée à URP 17.4.0.
+- Pusher les `.meta` : ils sont versionnés dans Git pour éviter les UUID cassées.
+- Ouvrir les scenes via le `Project` panel plutôt que la barre de scène par défaut.
+
+---
+
 ## Structure du projet
 
 ```text

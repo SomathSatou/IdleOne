@@ -22,6 +22,11 @@
 11. [Questions Ouvertes](#11-questions-ouvertes)
 12. [Direction Artistique & Narrative](#12-direction-artistique--narrative)
 13. [Les 7 Arbres de Péchés](#13-les-7-arbres-de-péchés)
+14. [Système de Profil Joueur](#14-système-de-profil-joueur)
+15. [Interface Utilisateur (UI)](#15-interface-utilisateur-ui)
+16. [Système de Sauvegarde](#16-système-de-sauvegarde)
+17. [Paramètres du Jeu](#17-paramètres-du-jeu)
+18. [Navigation & Menus](#18-navigation--menus)
 
 ---
 
@@ -890,6 +895,525 @@ La base du joueur évolue visuellement au fil de la progression, reflétant la c
 **Synergies** : avec Colère (L-1 cumule avec C-1 sur FOR/CHA), avec Orgueil (L-6 cumule avec O-2 visiteurs), avec Envie (L-8 cumule avec E-8 sur héritage).
 
 <!-- Traité par Agent Concepteur : 10 nœuds, charme/CHA/événements spéciaux, branche Courtisane/Dominateur mutuellement exclusive, événements nocturnes, Festivités globales, capacité ultime Extase Éternelle, synergies Colère/Orgueil/Envie -->
+
+---
+
+## 14. Système de Profil Joueur
+
+> **Implémentation** : `Assets/Script/Entities/Player/` et `Assets/Script/Managers/GameManager.cs`.
+
+### 14.1 Structure du Profil
+
+Le profil joueur (`PlayerProfile`) est le conteneur principal de toutes les données d'une partie. Il regroupe :
+
+| Champ | Type | Description |
+|---|---|---|
+| **PlayerName** | string | Nom du joueur choisi à la création |
+| **RunCount** | int | Numéro du run actuel (commence à 1, incrémenté au rebirth) |
+| **PlayTime** | float | Temps de jeu total en secondes (cumulé sur tous les runs) |
+| **CreatedAt** | string (ISO 8601) | Date de création du profil |
+| **LastSavedAt** | string (ISO 8601) | Date de la dernière sauvegarde |
+| **Resources** | PlayerResources | Sous-système de ressources (§14.2) |
+| **Inventory** | PlayerInventory | Sous-système d'inventaire (§14.3) |
+
+Toutes les classes sont `[Serializable]` pour la sauvegarde future (§16).
+
+### 14.2 Cycle de vie des Ressources
+
+Les ressources sont centralisées dans `PlayerResources`. Elles se divisent en deux catégories selon leur comportement au rebirth :
+
+#### Ressources reset au Rebirth
+
+| Ressource | Type | Source | Référence GDD |
+|---|---|---|---|
+| **Fragments** | float | Clic + idle | §7.1 |
+| **Gold** | float | Commerce late-game, ventes | §7.2.1 |
+| **Materials** | int | Expéditions, mining | §7.1 |
+
+#### Ressources persistantes
+
+| Ressource | Type | Source | Référence GDD |
+|---|---|---|---|
+| **Essence** | float | Rebirth uniquement | §6.2 |
+| **Taboo** | float | Sacrifices, décisions morales | §7.2.2 |
+| **Wishes** | int | Milestones globaux | §7.2.3 |
+
+#### Méthodes principales
+
+- `Add(ResourceType, amount)` — Ajoute une quantité à une ressource
+- `Spend(ResourceType, amount) → bool` — Dépense si le joueur peut se le permettre
+- `CanAfford(ResourceType, amount) → bool` — Vérifie la disponibilité
+- `ResetForRebirth()` — Applique le reset selon les règles §6.3/§6.4
+
+Un événement `OnResourceChanged(ResourceType, oldValue, newValue)` permet à l'UI de se rafraîchir automatiquement.
+
+### 14.3 Inventaire & Slots
+
+L'inventaire (`PlayerInventory`) gère les créatures et les composants de craft.
+
+#### Créatures
+
+| Liste | Description | Comportement au Rebirth |
+|---|---|---|
+| **OwnedCreatures** | Toutes les créatures du joueur | Reset (vidé) |
+| **ActiveCreatures** | Créatures déployées dans les slots actifs | Reset (vidé) |
+
+**MaxActiveSlots** : 5 par défaut. Augmentable via la boutique de prestige (§6.5 — Slot Créature+, coût 20 Essence par slot).
+
+#### Types débloqués (persistent au rebirth)
+
+| Liste | Contenu | Source de déblocage |
+|---|---|---|
+| **UnlockedSkeletons** | Types de squelettes disponibles au craft | Boutique prestige (§6.5) |
+| **UnlockedShapes** | Formes disponibles au craft | Boutique prestige + expéditions |
+| **UnlockedColors** | Couleurs disponibles au craft | Boutique prestige + expéditions |
+
+#### Stocks consommables (reset au rebirth)
+
+| Stock | Description |
+|---|---|
+| **ShapeStock** | Quantités de chaque forme (utilisées au craft Gen-0) |
+| **ColorStock** | Quantités de chaque couleur (utilisées au craft Gen-0) |
+
+#### Contenu de départ — Run 1 (§8)
+
+- 1 squelette : Bipède
+- 3 formes débloquées : Rond, Triangle, Carré (+ stock initial de 3 chacune)
+- 3 couleurs débloquées : Rouge, Bleu, Vert (+ stock initial de 3 chacune)
+- 5 slots de créatures actives
+
+### 14.4 GameManager
+
+Le `GameManager` est un **singleton MonoBehaviour** (`DontDestroyOnLoad`) qui centralise l'accès au profil joueur.
+
+| Propriété / Méthode | Description |
+|---|---|
+| `Instance` (static) | Accès global au singleton |
+| `CurrentProfile` | Profil du joueur actuellement chargé |
+| `NewGame(playerName)` | Crée un profil vierge avec les contenus de départ du Run 1 |
+| `Rebirth()` | Reset les ressources/inventaire, incrémente RunCount, calcule l'Essence gagnée (§6.2) |
+| `LoadProfile(profile)` | Charge un profil existant (utilisé par le système de sauvegarde) |
+
+**Formule d'Essence au Rebirth (placeholder)** :
+```
+Essence = (nb_créatures × 0.5) + (gen_max × 2) + (run_count × 1)
+Minimum : 1 Essence par rebirth
+```
+
+Cette formule sera affinée quand les systèmes d'expédition et de zones seront implémentés (cf. §6.2).
+
+---
+
+## 15. Interface Utilisateur (UI)
+
+> **Implémentation** : `Assets/Script/UI/`, `Assets/Script/UI/Tabs/`, `Assets/Script/MainUISpawner.cs`.
+
+### 15.1 Architecture d'Onglets
+
+Le système d'onglets (`TabManager`) est le composant central de navigation dans l'UI du jeu. Il est **générique et réutilisable** pour différents contextes (UI principale, paramètres, etc.).
+
+| Élément | Description |
+|---|---|
+| **TabDefinition** | Structure contenant : nom de l'onglet, GameObject du contenu, Button de sélection |
+| **SwitchTab(index)** | Désactive tous les contenus, active celui de l'index donné, met à jour les couleurs des boutons |
+| **OnTabChanged(index)** | Événement C# déclenché à chaque changement d'onglet, permettant aux panneaux de se rafraîchir |
+| **Highlight visuel** | Le bouton de l'onglet actif change de couleur (activeColor vs inactiveColor) |
+| **Ajout dynamique** | Méthode `AddTab()` pour construire les onglets en runtime (spawners programmatiques) |
+
+Principes de navigation :
+- Un seul onglet est actif à la fois
+- Le premier onglet est affiché par défaut au démarrage
+- Le contenu des onglets inactifs est désactivé (`SetActive(false)`) pour optimiser les performances
+- Le TabManager ne dépend d'aucun système spécifique — il gère uniquement la visibilité et les événements
+
+### 15.2 Liste de Créatures
+
+L'onglet "Créatures" affiche la liste scrollable de toutes les créatures du joueur (`PlayerInventory.OwnedCreatures`).
+
+| Élément | Description |
+|---|---|
+| **CreatureListUI** | Gère la liste scrollable et le panneau de détails |
+| **CreatureListItemUI** | Élément de liste pour chaque créature — affiche nom, génération, composants, total stats, statut |
+| **Panneau Détail** | Affiche les informations complètes de la créature sélectionnée |
+| **Bouton Activer** | Déploie la créature dans un slot actif (`PlayerInventory.SetActive()`) ou la désactive |
+| **Bouton Détails** | Affiche/masque le panneau de détails |
+| **Bouton Recycler** | Placeholder pour le système de recyclage (Temple des Sacrifices, §7.5.1) |
+
+Comportements :
+- La liste se rafraîchit automatiquement quand l'onglet redevient actif (via `OnTabChanged`)
+- Chaque item affiche : nom, Gen-N, squelette/forme/couleur, total stats, statut (Actif/Inactif/Incapacité)
+- La sélection d'un item met à jour le panneau de détails et applique un highlight visuel
+
+Filtres et tri futurs (non implémentés) :
+- Tri par nom, génération, total stats, statut
+- Filtre par squelette, forme, couleur, statut
+- Recherche par nom
+
+### 15.3 Inventaire
+
+L'onglet "Inventaire" affiche les stocks de composants pour le craft Gen-0.
+
+| Section | Contenu | Source de données |
+|---|---|---|
+| **Formes** | Grid d'items (icône couleur + nom + quantité) | `PlayerInventory.ShapeStock` |
+| **Couleurs** | Grid d'items (icône couleur + nom + quantité) | `PlayerInventory.ColorStock` |
+| **Squelettes débloqués** | Liste non consommable des types disponibles | `PlayerInventory.UnlockedSkeletons` |
+
+Les formes et couleurs sont des **ressources consommables** (§7.1), tandis que les squelettes sont des **types débloqués** permanents (§6.5).
+
+L'inventaire se rafraîchit au retour sur l'onglet via `OnTabChanged`.
+
+### 15.4 Panneau Statistiques Joueur
+
+L'onglet "Stats" affiche les ressources en temps réel et les informations de profil.
+
+#### Ressources affichées
+
+| Ressource | Format | Mise à jour |
+|---|---|---|
+| Fragments | Entier | Temps réel via `OnResourceChanged` |
+| Gold | Entier | Temps réel via `OnResourceChanged` |
+| Materials | Entier | Temps réel via `OnResourceChanged` |
+| Essence | Décimal (1 chiffre) | Temps réel via `OnResourceChanged` |
+| Taboo | Décimal (1 chiffre) | Temps réel via `OnResourceChanged` |
+| Wishes | Entier | Temps réel via `OnResourceChanged` |
+
+#### Informations de profil
+
+| Info | Source |
+|---|---|
+| Nom du joueur | `PlayerProfile.PlayerName` |
+| Run actuel | `PlayerProfile.RunCount` |
+| Temps de jeu | `PlayerProfile.PlayTime` (formaté HH:MM:SS) |
+| Nombre de créatures | `PlayerInventory.OwnedCreatures.Count` |
+
+Le panneau s'abonne à `PlayerResources.OnResourceChanged` pour un rafraîchissement automatique sans polling.
+
+### 15.5 Intégration BreedingUI
+
+L'UI de breeding existante (§4.5) est intégrée telle quelle comme contenu de l'onglet "Breeding".
+
+| Aspect | Détail |
+|---|---|
+| **Composant** | `BreedingUI` existant, non modifié |
+| **Initialisation** | Via `BreedingUI.Initialize()` avec injection des références UI |
+| **Contenu** | Parents A/B avec radar charts, prédiction hexagonale, résultat enfant, contrôles (variance, mutation) |
+| **Autonomie** | Le BreedingUI gère ses propres parents aléatoires et son propre breeding |
+
+Le spawner `MainUISpawner` reconstruit la même hiérarchie UI que le `DemoBreedingSpawner` à l'intérieur du panneau d'onglet Breeding.
+
+#### Header persistant
+
+Un header en haut de l'écran affiche en permanence les trois ressources principales :
+- **Fragments** (couleur dorée)
+- **Essence** (couleur violette)
+- **Gold** (couleur or)
+
+Ce header est visible sur tous les onglets et se met à jour en temps réel.
+
+---
+
+## 16. Système de Sauvegarde
+
+> **Implémentation** : `Assets/Script/Managers/SaveManager.cs`, `Assets/Script/Entities/Player/SaveData.cs`, `SaveMetadata.cs`, `SerializableKeyValue.cs`.
+
+### 16.1 Slots de Sauvegarde
+
+Le jeu propose **3 slots de sauvegarde** indépendants (numérotés 0, 1, 2).
+
+| Élément | Détail |
+|---|---|
+| **Format** | JSON (`JsonUtility` Unity natif, aucune dépendance externe) |
+| **Emplacement** | `Application.persistentDataPath + "/saves/"` |
+| **Nom de fichier** | `save_slot{N}.json` (N = 0, 1, 2) |
+| **Métadonnées rapides** | Nom du joueur, numéro de run, temps de jeu, date de dernière sauvegarde, version du jeu — accessibles sans charger tout le profil |
+
+Chaque slot peut être sauvegardé, chargé ou supprimé indépendamment. Le slot actif (utilisé par l'auto-save) est mémorisé dans `PlayerPrefs`.
+
+### 16.2 Auto-Sauvegarde
+
+| Paramètre | Valeur par défaut | Limites |
+|---|---|---|
+| **Activée** | Oui | Toggle on/off |
+| **Intervalle** | 5 minutes | Min : 1 min, Max : 60 min |
+| **Slot cible** | Slot actif (PlayerPrefs) | 0, 1 ou 2 |
+
+- L'auto-save fonctionne via une **coroutine** (`WaitForSecondsRealtime`) pour ne pas geler le jeu ni être affecté par `Time.timeScale`.
+- L'auto-save ne s'exécute pas s'il n'y a aucun profil chargé.
+- L'intervalle peut être modifié à chaud (la coroutine est redémarrée).
+
+### 16.3 Export / Import
+
+#### Export
+
+- Copie le fichier JSON d'un slot vers un chemin choisi par le joueur.
+- Le fichier exporté utilise l'extension custom **`.idleonesave`** pour éviter toute confusion avec d'autres fichiers JSON.
+
+#### Import
+
+- Le joueur sélectionne un fichier `.idleonesave` et un slot de destination.
+- **Validation avant écrasement** :
+  - Le fichier doit être un JSON valide.
+  - Le champ `Version` doit être présent (preuve qu'il s'agit d'un fichier IdleOne).
+  - Le champ `Profile` doit exister.
+- Si la validation échoue, l'import est refusé avec un message explicite.
+
+### 16.4 Données Sauvegardées
+
+Le conteneur de sauvegarde (`SaveData`) encapsule :
+
+| Champ | Type | Description |
+|---|---|---|
+| **Metadata** | SaveMetadata | Métadonnées rapides (§16.1) |
+| **Profile** | PlayerProfile | Profil complet (§14.1) : identité, ressources, inventaire, créatures |
+| **Version** | string | Version du format de sauvegarde |
+| **SerializedShapeStock** | List\<SerializableKeyValue\> | Stock de formes (conversion depuis Dictionary) |
+| **SerializedColorStock** | List\<SerializableKeyValue\> | Stock de couleurs (conversion depuis Dictionary) |
+
+> **Note technique** : `JsonUtility` ne sérialise pas les `Dictionary<string, int>`. Les stocks de formes et couleurs du `PlayerInventory` sont convertis en listes de paires clé-valeur (`SerializableKeyValue`) lors de la sauvegarde, et reconstruits en Dictionary au chargement.
+
+### 16.5 Migration de Sauvegardes
+
+Chaque fichier de sauvegarde contient un champ **`Version`** (format sémantique : `"1.0.0"`).
+
+Ce champ permettra dans le futur :
+- De détecter les sauvegardes obsolètes.
+- D'appliquer des migrations automatiques (ajout de nouveaux champs, conversion de structures).
+- De refuser les fichiers incompatibles avec un message clair.
+
+La version actuelle du format est `1.0.0`.
+
+---
+
+## 17. Paramètres du Jeu
+
+> **Implémentation** : `Assets/Script/Managers/SettingsManager.cs`, `Assets/Script/UI/Settings/SettingsUI.cs`, `SaveSettingsUI.cs`, `AudioSettingsUI.cs`, `GraphicsSettingsUI.cs`, `SettingsSpawner.cs`.
+
+### 17.1 Catégories de Paramètres
+
+Le panneau de paramètres est un **overlay** (Canvas avec sort order supérieur) accessible depuis le menu principal ou le jeu, sans changement de scène. Il utilise le `TabManager` (§15.1) pour organiser les réglages en sous-onglets.
+
+| Catégorie | Description | Application |
+|---|---|---|
+| **Sauvegarde** | Auto-save, export/import de fichiers | Immédiate via SaveManager |
+| **Audio** | Volumes master, musique, SFX, mute | Temps réel |
+| **Graphismes** | Qualité, résolution, plein écran | Via bouton "Appliquer" |
+
+Le panneau inclut un bouton "Réinitialiser" pour rétablir tous les paramètres aux valeurs par défaut, et un bouton "Fermer" (✕) pour masquer l'overlay.
+
+### 17.2 Sauvegarde
+
+Le sous-onglet Sauvegarde permet de configurer l'auto-save et de gérer l'export/import.
+
+#### Auto-sauvegarde
+
+| Contrôle | Type | Détail |
+|---|---|---|
+| **Activée/Désactivée** | Toggle | Synchronisé avec `SaveManager.AutoSaveEnabled` |
+| **Intervalle** | Slider (1-60 min) | Pas de 1 minute, synchronisé avec `SaveManager.SetAutoSaveInterval()` |
+| **Sauvegarder maintenant** | Bouton | Sauvegarde immédiate dans le slot actif |
+| **Dernière sauvegarde** | Label | Date/heure du dernier auto-save ou save manuel |
+
+#### Export
+
+| Contrôle | Type | Détail |
+|---|---|---|
+| **Slot à exporter** | Dropdown (0, 1, 2) | Sélection du slot source |
+| **Exporter** | Bouton | Copie vers `persistentDataPath/exports/` avec timestamp |
+
+#### Import
+
+| Contrôle | Type | Détail |
+|---|---|---|
+| **Slot de destination** | Dropdown (0, 1, 2) | Sélection du slot cible |
+| **Importer un fichier** | Bouton | Importe le fichier `.idleonesave` le plus récent du dossier exports |
+
+### 17.3 Audio
+
+Le sous-onglet Audio permet de régler les volumes du jeu. **Les changements s'appliquent en temps réel** (pas de bouton "Appliquer").
+
+| Contrôle | Type | Plage | Défaut |
+|---|---|---|---|
+| **Volume Master** | Slider | 0-100% | 100% |
+| **Volume Musique** | Slider | 0-100% | 70% |
+| **Volume SFX** | Slider | 0-100% | 100% |
+| **Muet global** | Toggle | On/Off | Off |
+
+- Le **Volume Master** est appliqué via `AudioListener.volume`.
+- Les volumes **Musique** et **SFX** seront routés via les `AudioSource` individuelles ou un `AudioMixer` quand le système audio sera en place.
+- Le **Muet global** force `AudioListener.volume = 0` indépendamment des sliders.
+
+### 17.4 Graphismes
+
+Le sous-onglet Graphismes permet de configurer la qualité d'affichage. **Les changements nécessitent un clic "Appliquer"** pour prendre effet.
+
+| Contrôle | Type | Source | Défaut |
+|---|---|---|---|
+| **Qualité** | Dropdown | `QualitySettings.names` (Low, Medium, High, Ultra…) | Max disponible |
+| **Plein écran** | Toggle | `Screen.fullScreen` | Activé |
+| **Résolution** | Dropdown | `Screen.resolutions` (liste dynamique) | Résolution courante |
+
+Les paramètres graphiques sont appliqués via :
+- `QualitySettings.SetQualityLevel()`
+- `Screen.fullScreen`
+- `Screen.SetResolution()`
+
+### 17.5 Persistance
+
+Les paramètres du jeu sont stockés dans **`PlayerPrefs`**, indépendamment des fichiers de sauvegarde du profil joueur.
+
+| Aspect | Détail |
+|---|---|
+| **Stockage** | `PlayerPrefs` (clés préfixées `Settings_`) |
+| **Chargement** | Automatique au démarrage (`SettingsManager.Awake()`) |
+| **Sauvegarde** | Immédiate à chaque modification |
+| **Portée** | Globale — les settings ne sont pas liés à un slot de sauvegarde |
+| **Reset** | Bouton "Réinitialiser" dans le panneau Settings |
+
+Cette séparation garantit que les préférences du joueur (volume, qualité, etc.) sont conservées même si les fichiers de sauvegarde sont supprimés ou importés.
+
+### 17.6 Extensibilité
+
+Le système de paramètres est conçu pour être facilement extensible :
+
+| Future catégorie | Contenu envisagé |
+|---|---|
+| **Contrôles** | Remapping des touches, sensibilité |
+| **Accessibilité** | Taille du texte, daltonisme, sous-titres |
+| **Notifications** | Alertes de récolte, rappels d'expédition |
+| **Gameplay** | Vitesse de jeu, skip des animations |
+
+Pour ajouter une nouvelle catégorie :
+1. Créer un nouveau `MonoBehaviour` UI (ex: `ControlsSettingsUI.cs`) dans `Assets/Script/UI/Settings/`
+2. Ajouter les clés `PlayerPrefs` dans `SettingsManager`
+3. Ajouter un onglet dans le `SettingsSpawner` via `TabManager.AddTab()`
+
+---
+
+## 18. Navigation & Menus
+
+Cette section décrit le flux de navigation entre les scènes, le menu principal, les slots de sauvegarde, le menu debug et l'architecture des scènes.
+
+### 18.1 Flux de Navigation
+
+Le jeu suit un flux linéaire de scènes, géré exclusivement par le `GameSceneManager` (singleton).
+
+```
+[Bootstrap]  →  Initialise tous les managers (DontDestroyOnLoad)
+     │
+     │  Profil chargé ?  ── oui ──→  [MainUI]
+     │                     ── non ──→  [MainMenu]
+     ▼
+[MainMenu]   →  Nouvelle Partie / Charger / Paramètres / Quitter
+     │
+     ├── Nouvelle Partie → saisie nom → GameManager.NewGame() → [MainUI]
+     ├── Charger → SaveSlotUI → SaveManager.LoadGame() → [MainUI]
+     ├── Paramètres → SettingsUI (overlay)
+     └── Quitter → Application.Quit()
+     ▼
+[MainUI]     →  Scène principale avec onglets (§15)
+     │
+     ├── Bouton ⚙ → SettingsUI (overlay)
+     ├── F12 / Bouton Debug → DebugMenuUI (overlay)
+     └── DebugMenu > "Retour Menu" → sauvegarde + [MainMenu]
+```
+
+**Règle** : toutes les transitions de scène passent par `GameSceneManager`. Aucun appel direct à `SceneManager.LoadScene()` n'est autorisé ailleurs.
+
+### 18.2 Menu Principal
+
+La scène `MainMenu` affiche un menu central avec 4 boutons :
+
+| Bouton | Action |
+|---|---|
+| **Nouvelle Partie** | Ouvre un panneau de saisie du nom du joueur. Crée un profil via `GameManager.NewGame(name)`, sauvegarde dans le premier slot disponible, puis charge MainUI. |
+| **Charger Partie** | Ouvre le panneau `SaveSlotUI` affichant les 3 slots de sauvegarde (§18.3). |
+| **Paramètres** | Ouvre le panneau `SettingsUI` en overlay (§17). |
+| **Quitter** | Appelle `Application.Quit()`. En éditeur, arrête le Play Mode. |
+
+Le menu affiche également :
+- Le titre du jeu ("IdleOne")
+- Le sous-titre ("Idle Breeding Game")
+- La version du jeu en bas à droite (`Application.version`)
+
+**Implémentation** : `MainMenuSpawner.cs` construit toute l'UI en runtime (même pattern que `MainUISpawner`).
+
+### 18.3 Slots de Sauvegarde
+
+Le panneau `SaveSlotUI` affiche les 3 slots de sauvegarde (constante `SaveManager.MAX_SLOTS`).
+
+| Élément | Détail |
+|---|---|
+| **Slot occupé** | Affiche : nom joueur, numéro de run, temps de jeu formaté (Xh XXm), date dernière sauvegarde (dd/MM/yyyy HH:mm) |
+| **Slot vide** | Affiche "Slot vide" grisé, boutons désactivés |
+| **Bouton Charger** | `SaveManager.LoadGame(slot)` → `GameManager.LoadProfile(profile)` → `GameSceneManager.LoadMainUI()` |
+| **Bouton Supprimer** | Panneau de confirmation → `SaveManager.DeleteSave(slot)` → rafraîchissement |
+| **Bouton Retour** | Ferme le panneau, retour au menu principal |
+
+Les métadonnées sont lues via `SaveManager.GetSaveInfo(slot)` sans charger le profil complet.
+
+### 18.4 Menu Debug
+
+Menu overlay réservé au développement, **compilé conditionnellement** avec `#if UNITY_EDITOR || DEVELOPMENT_BUILD`.
+
+| Aspect | Détail |
+|---|---|
+| **Activation** | Touche `F12` (toggle) ou bouton dans le header de MainUI |
+| **Affichage** | Panneau latéral droit, Canvas overlay (sortingOrder 200) |
+| **Fermeture** | Bouton ✕, touche F12, ou bouton header |
+
+#### Navigation rapide
+
+| Bouton | Action |
+|---|---|
+| Créatures | `TabManager.SwitchTab(0)` |
+| Breeding | `TabManager.SwitchTab(1)` |
+| Inventaire | `TabManager.SwitchTab(2)` |
+| Stats | `TabManager.SwitchTab(3)` |
+| Paramètres | `SettingsSpawner.Toggle()` |
+| Retour Menu | Sauvegarde + `GameSceneManager.LoadMainMenu()` |
+
+#### Triche Debug
+
+| Bouton | Effet |
+|---|---|
+| +1000 Fragments | `Resources.Add(Fragments, 1000)` |
+| +100 Essence | `Resources.Add(Essence, 100)` |
+| +10 Gold | `Resources.Add(Gold, 10)` |
+| Spawn Créature | Crée une créature aléatoire dans l'inventaire |
+| Forcer Save | `SaveManager.SaveGame(activeSlot)` |
+| Rebirth | `GameManager.Rebirth()` |
+| Toggle Console | Affiche/masque un log scrollable (`Application.logMessageReceived`) |
+
+#### Infos Runtime
+
+| Info | Source |
+|---|---|
+| FPS | `1 / Time.unscaledDeltaTime` (moyenne 0.5s) |
+| Nombre de créatures | `Inventory.OwnedCreatures.Count` |
+| Slot actif | `SaveManager.ActiveSlot` |
+| Dernière auto-save | `PlayerProfile.LastSavedAt` |
+
+### 18.5 Architecture des Scènes
+
+Le jeu utilise 3 scènes principales :
+
+| Scène | Index Build | Rôle | Contenu |
+|---|---|---|---|
+| **Bootstrap** | 0 | Point d'entrée unique | `BootstrapLoader` : crée les singletons managers, redirige vers MainMenu ou MainUI |
+| **MainMenu** | 1 | Menu principal | `MainMenuSpawner` : construit le menu, intègre SaveSlotUI et SettingsSpawner |
+| **MainUI** | 2 | Jeu principal | `MainUISpawner` : 4 onglets, header ressources, bouton Settings, bouton Debug |
+
+#### Managers Singleton (DontDestroyOnLoad)
+
+| Manager | Fichier | Rôle |
+|---|---|---|
+| `GameManager` | `Managers/GameManager.cs` | Profil joueur, NewGame, Rebirth |
+| `SaveManager` | `Managers/SaveManager.cs` | Sauvegarde/chargement, auto-save, export/import |
+| `SettingsManager` | `Managers/SettingsManager.cs` | Paramètres audio/graphismes/sauvegarde |
+| `GameSceneManager` | `Managers/GameSceneManager.cs` | Transitions de scène |
+
+Tous suivent le pattern singleton : `if (Instance != null && Instance != this) Destroy(gameObject)`.
 
 ---
 
