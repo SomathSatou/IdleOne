@@ -1,5 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using TMPro;
 using Assets.Script.UI;
 
@@ -33,6 +35,12 @@ namespace Assets.Script
             var scaler = canvasGO.GetComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920, 1080);
+
+            if (EventSystem.current == null)
+            {
+                var esGO = new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
+                esGO.GetComponent<InputSystemUIInputModule>();
+            }
         }
 
         private void BuildUI()
